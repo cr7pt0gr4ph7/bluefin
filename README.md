@@ -1,19 +1,33 @@
-# bluefin
-**This image is considered Beta** 
+# bluefin and aurora
+**These images are considered Beta** 
+
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2503a44c1105456483517f793af75ee7)](https://app.codacy.com/gh/ublue-os/bluefin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade) 
+
+## Bluefin - [projectbluefin.io](https://projectbluefin.io)
+
+[![bluefin 38](https://github.com/ublue-os/bluefin/actions/workflows/build-38-bluefin.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-38-bluefin.yml) [![bluefin 39](https://github.com/ublue-os/bluefin/actions/workflows/build-39-bluefin.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-39-bluefin.yml) [![bluefin 40](https://github.com/ublue-os/bluefin/actions/workflows/build-40-bluefin.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-40-bluefin.yml)
 
 ![image](https://github.com/ublue-os/bluefin/assets/1264109/c0b3fa8a-f513-4bb1-b314-e134d1802e18)
 
 > "Evolution is a process of constant branching and expansion." - Stephen Jay Gould
 
-## [projectbluefin.io](https://projectbluefin.io)
-- [Announcement Blog Post](https://www.ypsidanger.com/announcing-project-bluefin/)
-
 A familiar(ish) Ubuntu desktop for Fedora Silverblue. It strives to cover these two use cases. For end users it provides a system as reliable as a Chromebook with near-zero maintainance, with the power of Ubuntu and Fedora fused together. For gamers we strive to deliver a world-class Flathub gaming experience. Check [Introduction to Bluefin](https://universal-blue.discourse.group/t/introduction-to-bluefin/41) for a feature walkthrough. 
 
-# Download
+- [Download Bluefin](https://projectbluefin.io/#scene-picker)
 
-Use the [website image picker](https://projectbluefin.io/#scene-picker) to download an ISO to install Bluefin onto your PC!
+## Aurora - [getaurora.dev](https://getaurora.dev)
 
+[![aurora 39](https://github.com/ublue-os/bluefin/actions/workflows/build-39-aurora.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-39-aurora.yml) [![aurora 40](https://github.com/ublue-os/bluefin/actions/workflows/build-40-aurora.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-40-aurora.yml)
+
+![Screenshot_20240409_234125](https://github.com/ublue-os/bluefin/assets/1264109/08a294ba-c182-4329-aaa2-0d402a92071f)
+
+Aurora is a delightful KDE desktop experience for end-users that are looking for reliability and developers for the most-hassle free setup. Zero maintenance included.
+
+- [Download Aurora](https://getaurora.dev)
+
+### What's the relationship between Aurora and Bluefin?
+
+Both Aurora and Bluefin strive to offer a curated out of the box experience for users, they only differ in the default desktop and recommended applications: Bluefin uses GNOME, Aurora uses KDE. They are both maintained and built in this repository.  
 
 # Documentation
 
