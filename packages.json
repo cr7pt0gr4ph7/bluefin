@@ -7,6 +7,7 @@
 				"evtest",
 				"epson-inkjet-printer-escpr",
 				"epson-inkjet-printer-escpr2",
+				"fastfetch",
 				"fish",
 				"firewall-config",
 				"gcc",
@@ -42,11 +43,11 @@
 			],
 			"silverblue": [
 				"gnome-shell-extension-appindicator",
-				"gnome-shell-extension-blur-my-shell",
 				"gnome-shell-extension-caffeine",
 				"gnome-shell-extension-dash-to-dock",
 				"gnome-shell-extension-gsconnect",
 				"gnome-shell-extension-logo-menu",
+				"gnome-shell-extension-search-light",
 				"libgda-sqlite",
 				"libgda",
 				"libratbag-ratbagd",
@@ -54,8 +55,10 @@
 				"yaru-theme"
 			],
 			"kinoite": [
-				"fastfetch",
-				"libadwaita-qt5"
+				"libadwaita-qt5",
+				"libadwaita-qt6",
+				"kdeplasma-addons",
+				"plasma-wallpapers-dynamic"
 			],
 			"dx": [
 				"adobe-source-code-pro-fonts",
@@ -137,6 +140,7 @@
 	"38": {
 		"include": {
 			"silverblue": [
+				"gnome-shell-extension-blur-my-shell",
 				"gnome-shell-extension-tailscale-status"
 			],
 			"dx": [
@@ -155,13 +159,10 @@
 	"39": {
 		"include": {
 			"all": [
-				"input-leap",
-				"tuned",
-				"tuned-ppd",
-				"tuned-utils",
-				"tuned-profiles-atomic"
+				"input-leap"
 			],
 			"silverblue": [
+				"gnome-shell-extension-blur-my-shell",
 				"gnome-shell-extension-tailscale-gnome-qs",
 				"nautilus-open-any-terminal"
 			],
@@ -173,10 +174,7 @@
 		},
 		"exclude": {
 			"all": [
-				"podman-docker",
-				"power-profiles-daemon",
-				"tlp",
-				"tlp-rdw"
+				"podman-docker"
 			],
 			"silverblue": [
 				"gnome-terminal-nautilus"
@@ -187,11 +185,7 @@
 	"40": {
 		"include": {
 			"all": [
-				"input-leap",
-				"tuned",
-				"tuned-ppd",
-				"tuned-utils",
-				"tuned-profiles-atomic"
+				"input-leap"
 			],
 			"silverblue": [
 				"gnome-shell-extension-tailscale-gnome-qs",
@@ -201,10 +195,7 @@
 		},
 		"exclude": {
 			"all":	[
-				"podman-docker",
-				"power-profiles-daemon",
-				"tlp",
-				"tlp-rdw"
+				"podman-docker"
 			],
 			"silverblue": [
 				"gnome-terminal-nautilus"
