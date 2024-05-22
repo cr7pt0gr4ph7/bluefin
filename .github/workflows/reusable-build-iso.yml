@@ -66,9 +66,9 @@ jobs:
           elif [[ ${{ inputs.brand_name }} == "aurora" ]]; then
             echo "VARIANT=Kinoite" >> $GITHUB_ENV
           fi
-          if [[ ${{ inputs.fedora_version }} == "38" ]]; then
+          if [[ ${{ inputs.fedora_version }} == "39" ]]; then
             echo "IS_GTS_VERSION=true" >> $GITHUB_ENV
-          elif [[ ${{ inputs.fedora_version }} == "39" ]]; then
+          elif [[ ${{ inputs.fedora_version }} == "40" ]]; then
             echo "IS_LATEST_VERSION=true" >> $GITHUB_ENV
           fi
 
@@ -180,7 +180,7 @@ jobs:
           overwrite: true
 
       - name: Upload ISOs and Checksum to R2 to Bluefin Bucket
-        if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main' && inputs.brand_name == 'bluefin'
+        if: github.ref_name == 'main' && inputs.brand_name == 'bluefin'
         shell: bash
         env:
           RCLONE_CONFIG_R2_TYPE: s3
@@ -196,7 +196,7 @@ jobs:
           rclone copy $SOURCE_DIR R2:bluefin
 
       - name: Upload ISOs and Checksum to R2 to Aurora Bucket
-        if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main' && inputs.brand_name == 'aurora'
+        if: github.ref_name == 'main' && inputs.brand_name == 'aurora'
         shell: bash
         env:
           RCLONE_CONFIG_R2_TYPE: s3

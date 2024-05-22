@@ -1,5 +1,173 @@
 # Changelog
 
+## [2.7.0](https://github.com/ublue-os/bluefin/compare/v2.6.0...v2.7.0) (2024-05-16)
+
+
+### Features
+
+* Add back xwayland video bridge to all images ([#1264](https://github.com/ublue-os/bluefin/issues/1264)) ([91a67ad](https://github.com/ublue-os/bluefin/commit/91a67add37e7ed7586d8e96380f43a2b6d100cb5))
+* add configure-grub just command ([#1206](https://github.com/ublue-os/bluefin/issues/1206)) ([c330195](https://github.com/ublue-os/bluefin/commit/c33019532fc99f7a0d8cde4403e8d9b7155aeada))
+* Add GNOME Triple Buffering support in F40 Bluefin ([#1267](https://github.com/ublue-os/bluefin/issues/1267)) ([0d7929d](https://github.com/ublue-os/bluefin/commit/0d7929dbbe5a2b7eef5d37d1e070409e8ef63b5d))
+* add invokeai Just script ([#1312](https://github.com/ublue-os/bluefin/issues/1312)) ([1fe853b](https://github.com/ublue-os/bluefin/commit/1fe853bbbb17cf4381f64287cfa6d8a1128a7660))
+* **brew:** Add example to motd ([#1303](https://github.com/ublue-os/bluefin/issues/1303)) ([cfde5c2](https://github.com/ublue-os/bluefin/commit/cfde5c2521ab79082800234431f7dd2a7c366596))
+* **dev:** improve just commands ([#1297](https://github.com/ublue-os/bluefin/issues/1297)) ([6b38313](https://github.com/ublue-os/bluefin/commit/6b38313476623d90a1f672f909f72d179a5a34aa))
+* **dev:** make iso just commands work ([#1287](https://github.com/ublue-os/bluefin/issues/1287)) ([a0ace61](https://github.com/ublue-os/bluefin/commit/a0ace61c1957c55de7e401ce4656941a3d5fcfe6))
+* **framework:** Add Framework 13 font scale fix and audio fixes ([#1259](https://github.com/ublue-os/bluefin/issues/1259)) ([c55bf3b](https://github.com/ublue-os/bluefin/commit/c55bf3bc833f1945e2bd7f9edf605415ab9088c8))
+* **framework:** Stop enabling power-profile-switcher in ublue-user-setup ([#1282](https://github.com/ublue-os/bluefin/issues/1282)) ([6156c0c](https://github.com/ublue-os/bluefin/commit/6156c0cc8e1df91653abe54a1e80a70d1829b2f9))
+* **framework:** Use older mt7921e firmware ([#1275](https://github.com/ublue-os/bluefin/issues/1275)) ([86f09d6](https://github.com/ublue-os/bluefin/commit/86f09d66646895c1e543c379c000b69daf7dfcd4))
+* homebrew on image ([#1293](https://github.com/ublue-os/bluefin/issues/1293)) ([6bc98f0](https://github.com/ublue-os/bluefin/commit/6bc98f00b2a6cad9182ba5e5e4d2159cc6c46e7d))
+* improve devcontainer experience ([#1251](https://github.com/ublue-os/bluefin/issues/1251)) ([141cc1c](https://github.com/ublue-os/bluefin/commit/141cc1c22ae3f18398e6614bb8aae311cc9aa9fd))
+* **just:** add update-ng shortcut ([#1268](https://github.com/ublue-os/bluefin/issues/1268)) ([fec90f8](https://github.com/ublue-os/bluefin/commit/fec90f898f3e7d214dc4542b60b2f01a59357f5e))
+* Restore power profile switcher on framework ([#1289](https://github.com/ublue-os/bluefin/issues/1289)) ([8c9c1bd](https://github.com/ublue-os/bluefin/commit/8c9c1bd173846bac6f04b5c4c19b09a3cc8b515c))
+* rollback helper ([#1269](https://github.com/ublue-os/bluefin/issues/1269)) ([441c7f1](https://github.com/ublue-os/bluefin/commit/441c7f1649d2f4e2f47f10e65a760b4126f073ec))
+* Use ublue icon by default in Logo menu ([#1311](https://github.com/ublue-os/bluefin/issues/1311)) ([e529397](https://github.com/ublue-os/bluefin/commit/e529397a3e456ab795f90a87a609490fd90037bb))
+
+
+### Bug Fixes
+
+* add missing backup flatpaks dejadup and pika ([#1266](https://github.com/ublue-os/bluefin/issues/1266)) ([a8fa825](https://github.com/ublue-os/bluefin/commit/a8fa8255568bded6a32f6e249b2d6e0be6c2e028))
+* **bluefin:** set mutter debug kms to user by default ([#1263](https://github.com/ublue-os/bluefin/issues/1263)) ([18b7e67](https://github.com/ublue-os/bluefin/commit/18b7e67911c429c4b452a10ee201fa41ed0d7fcc))
+* brew.fish ([#1307](https://github.com/ublue-os/bluefin/issues/1307)) ([a4c90c7](https://github.com/ublue-os/bluefin/commit/a4c90c7bbf99d611ba303b85491166a96539a431))
+* **dev:** have ISOs build with flatpaks. clean ISOs ([#1288](https://github.com/ublue-os/bluefin/issues/1288)) ([802ab1b](https://github.com/ublue-os/bluefin/commit/802ab1b6d3241e778f7ce36d058d2ed82e460d7b))
+* **dx:** do not start ollama automatically ([#1281](https://github.com/ublue-os/bluefin/issues/1281)) ([faa9b14](https://github.com/ublue-os/bluefin/commit/faa9b144e7a7b9203fd26519f46738219599f649))
+* update search-light default appearance ([#1256](https://github.com/ublue-os/bluefin/issues/1256)) ([47bbaab](https://github.com/ublue-os/bluefin/commit/47bbaabf53207b6194bbebf72d330a5c4f7a0a9d))
+* Use slightly newer mediatek firmware due to confirmed issues wit… ([#1279](https://github.com/ublue-os/bluefin/issues/1279)) ([36b271b](https://github.com/ublue-os/bluefin/commit/36b271bbc6b1f7fe301bbf5b1850091f0e7ec555))
+
+
+### Reverts
+
+* "feat: Add back xwayland video bridge to all images" ([#1270](https://github.com/ublue-os/bluefin/issues/1270)) ([d91d5a2](https://github.com/ublue-os/bluefin/commit/d91d5a2e54f8dda763c39bab3b87388a67363fa3))
+
+## [2.6.0](https://github.com/ublue-os/bluefin/compare/v2.5.0...v2.6.0) (2024-05-04)
+
+
+### Features
+
+* add Ollama WebUI Just script ([#1224](https://github.com/ublue-os/bluefin/issues/1224)) ([6b58f98](https://github.com/ublue-os/bluefin/commit/6b58f9836bffb7ec0250296d2809e30e2c9325b6))
+* add support for old Brother printers ([#1250](https://github.com/ublue-os/bluefin/issues/1250)) ([687cece](https://github.com/ublue-os/bluefin/commit/687cecec28faca56df33e82060dc917856e7f436))
+* **aurora:** enable kde filesharing ([#1241](https://github.com/ublue-os/bluefin/issues/1241)) ([d16a7df](https://github.com/ublue-os/bluefin/commit/d16a7df502e3470bd2878062a65ab8fa19098461))
+* **framework:** Add color calibration files for the Framework 16 ([#1252](https://github.com/ublue-os/bluefin/issues/1252)) ([11e2685](https://github.com/ublue-os/bluefin/commit/11e26855aace46313a9f5d99cc9b188377f7110c))
+* **framework:** Add full/automatic support for Framework hardware ([#1247](https://github.com/ublue-os/bluefin/issues/1247)) ([7765bd6](https://github.com/ublue-os/bluefin/commit/7765bd6970fbc027a9dbe722927c0a98cc854cd3))
+* **framework:** Add switcheroo support for Fedora 39 builds ([#1248](https://github.com/ublue-os/bluefin/issues/1248)) ([6ca72a8](https://github.com/ublue-os/bluefin/commit/6ca72a87b400c5a87e24642fc112b4da4577c582))
+
+
+### Bug Fixes
+
+* correct ublue-update and disable rpmfusion/coprs after build time ([#1249](https://github.com/ublue-os/bluefin/issues/1249)) ([b9cf82c](https://github.com/ublue-os/bluefin/commit/b9cf82c3fa5760b6e29308ce4da6a048feeb9cf9))
+* **dx:** Restore Devpod to F40 ([#1244](https://github.com/ublue-os/bluefin/issues/1244)) ([84a14d3](https://github.com/ublue-os/bluefin/commit/84a14d35111eb9da2dcb638e6162f21e7f8099ec))
+* fastfetch don't include directory as option ([#1235](https://github.com/ublue-os/bluefin/issues/1235)) ([3e1369c](https://github.com/ublue-os/bluefin/commit/3e1369c98953a094341b9348d22acd2828111ba6))
+
+## [2.5.0](https://github.com/ublue-os/bluefin/compare/v2.4.0...v2.5.0) (2024-04-29)
+
+
+### Features
+
+* add kvmfr module (looking-glass) and vfio support ([#1226](https://github.com/ublue-os/bluefin/issues/1226)) ([49e7d04](https://github.com/ublue-os/bluefin/commit/49e7d0475ea0c362035c32dfded38e0f55c0b560))
+* Allow just to turn off transparency for terminals ([#1230](https://github.com/ublue-os/bluefin/issues/1230)) ([89b41d4](https://github.com/ublue-os/bluefin/commit/89b41d4fb71f7daf68c6c06db6a2f2979487c1c2))
+* **Aurora:** Add Pytxis shortcuts, branding, Desktop Effects ([#1213](https://github.com/ublue-os/bluefin/issues/1213)) ([0877a1e](https://github.com/ublue-os/bluefin/commit/0877a1e59b532bb6bf792dd71a0b611f3c8dda6d))
+* **bluefin:** add more logos ([#1221](https://github.com/ublue-os/bluefin/issues/1221)) ([4466818](https://github.com/ublue-os/bluefin/commit/4466818dfd6b16ea498657733a9e025a86267988))
+* Update bluefin-logo to a portrait version ([#1196](https://github.com/ublue-os/bluefin/issues/1196)) ([afd3645](https://github.com/ublue-os/bluefin/commit/afd36453f5238edb310c5d91dfffcfb6be1de190))
+
+
+### Bug Fixes
+
+* actually shuffle dinos ([#1217](https://github.com/ublue-os/bluefin/issues/1217)) ([6f0941d](https://github.com/ublue-os/bluefin/commit/6f0941d0c83d0676312683e73e3c7d514a8fcfc9))
+* **Aurora:** Change the default values for the wobbly windows desktop effect ([#1218](https://github.com/ublue-os/bluefin/issues/1218)) ([9229292](https://github.com/ublue-os/bluefin/commit/922929209663efc1b5b1cc2601802c5fd3b71821))
+* **Aurora:** consolidate locations for setting changes ([#1219](https://github.com/ublue-os/bluefin/issues/1219)) ([9bf6017](https://github.com/ublue-os/bluefin/commit/9bf601711eb8c61d14b18f07defe240a36452fce))
+* **aurora:** Fira Code NF for KDE ([#1223](https://github.com/ublue-os/bluefin/issues/1223)) ([e9436f6](https://github.com/ublue-os/bluefin/commit/e9436f608e9bb5d2d72eca5cefec98a621dcbb81))
+* **aurora:** make image backgrounds transparent ([#1229](https://github.com/ublue-os/bluefin/issues/1229)) ([3fe3db2](https://github.com/ublue-os/bluefin/commit/3fe3db2b95d5360a27e849b654fe7045af70e07f))
+* **Aurora:** Restore x11 for 40 ([#1214](https://github.com/ublue-os/bluefin/issues/1214)) ([737c555](https://github.com/ublue-os/bluefin/commit/737c5555021af65182bcef9e5a8409d23130d65a))
+* **bluefin:** remove mutter patch on 40 ([#1215](https://github.com/ublue-os/bluefin/issues/1215)) ([881a830](https://github.com/ublue-os/bluefin/commit/881a830fb6b69c0512c4850906f25377acc51501))
+* **ci:** Update Aurora ISO to 40 ([#1192](https://github.com/ublue-os/bluefin/issues/1192)) ([4d2b473](https://github.com/ublue-os/bluefin/commit/4d2b47379649a6cf8137b6621edb821a653ea93b))
+* correct typo for neofetch.fish function ([#1227](https://github.com/ublue-os/bluefin/issues/1227)) ([52a2d8f](https://github.com/ublue-os/bluefin/commit/52a2d8f65b7589b2cfa962ac3f59ef4bf50c4eb9))
+* Do not set SSH_ASKPASS_REQUIRE in Aurora ([#1210](https://github.com/ublue-os/bluefin/issues/1210)) ([95dd578](https://github.com/ublue-os/bluefin/commit/95dd57890ddd7c4441adafcabf230d25cafbf1ab))
+* **dx:** rework dx incus/swtpm and systemd services. Make incus setup work with Aurora ([#1231](https://github.com/ublue-os/bluefin/issues/1231)) ([020f325](https://github.com/ublue-os/bluefin/commit/020f325bae4ad3c02b93dc70d0bb6341d8ce1d6c))
+* enable common flatpak overrides ([#1211](https://github.com/ublue-os/bluefin/issues/1211)) ([4d50eca](https://github.com/ublue-os/bluefin/commit/4d50eca78407e0a6f7ac14b50a9a80fbc6914d59))
+* initramfs permissions ([#1233](https://github.com/ublue-os/bluefin/issues/1233)) ([1492ec8](https://github.com/ublue-os/bluefin/commit/1492ec8f60d94445a1d2cbfa9eb707954c95b3be))
+* move fish and zsh brew code to shared code branch. ([#1207](https://github.com/ublue-os/bluefin/issues/1207)) ([2999fc0](https://github.com/ublue-os/bluefin/commit/2999fc0c083c0aaad9ac39decd4d8030f5831b91))
+* remove already sunset framework builds ([#1203](https://github.com/ublue-os/bluefin/issues/1203)) ([62d3dd5](https://github.com/ublue-os/bluefin/commit/62d3dd564776c4b3500854c6be741058c37d0639))
+* update ollama install action ([#1222](https://github.com/ublue-os/bluefin/issues/1222)) ([ae8792e](https://github.com/ublue-os/bluefin/commit/ae8792e37344a85a823919453f784e5379a99fb6))
+
+## [2.4.0](https://github.com/ublue-os/bluefin/compare/v2.3.0...v2.4.0) (2024-04-23)
+
+
+### Features
+
+* bump Fedora 40 to latest and Fedora 39 to gts ([21f6e2c](https://github.com/ublue-os/bluefin/commit/21f6e2cc030d489a589338070757584ba515240b))
+* bump Fedora 40 to latest and Fedora 39 to gts ([#1186](https://github.com/ublue-os/bluefin/issues/1186)) ([21f6e2c](https://github.com/ublue-os/bluefin/commit/21f6e2cc030d489a589338070757584ba515240b))
+* update ISO build for F40 ([21f6e2c](https://github.com/ublue-os/bluefin/commit/21f6e2cc030d489a589338070757584ba515240b))
+
+
+### Bug Fixes
+
+* **ci:** Add ISO workflow for Bluefin for building latest ([#1190](https://github.com/ublue-os/bluefin/issues/1190)) ([5b76ec7](https://github.com/ublue-os/bluefin/commit/5b76ec743971a3a4ec337e807190f8ffd9c8120c))
+* remove beta label, let's go ([1e05545](https://github.com/ublue-os/bluefin/commit/1e05545353a13c58ad787f27316ac1561be7b927))
+
+## [2.3.0](https://github.com/ublue-os/bluefin/compare/v2.2.0...v2.3.0) (2024-04-22)
+
+
+### Features
+
+* add a flatpak install for rebasers ([#1175](https://github.com/ublue-os/bluefin/issues/1175)) ([ae069c7](https://github.com/ublue-os/bluefin/commit/ae069c7b4fd5d7d1ea3a4a75fe9f1127812ece40))
+* **motd:** recommend ujust choose in the motd. ([#1177](https://github.com/ublue-os/bluefin/issues/1177)) ([4d3b0bb](https://github.com/ublue-os/bluefin/commit/4d3b0bbe347c4359c6e02fc06a3c534de0222163))
+* **motd:** suggest ujust --choose in motd ([#1185](https://github.com/ublue-os/bluefin/issues/1185)) ([2ac97af](https://github.com/ublue-os/bluefin/commit/2ac97afa186ea91c1d308ef373497d572fd80e16))
+
+
+### Bug Fixes
+
+* **bluefin:** add blur-my-shell to Fedora 40 ([#1184](https://github.com/ublue-os/bluefin/issues/1184)) ([1ff846f](https://github.com/ublue-os/bluefin/commit/1ff846fd07d58cdcc67647a282a4e8bde4329200))
+* **ci:** Update reusable-image-scan.yml to use lowercase registry name ([#1183](https://github.com/ublue-os/bluefin/issues/1183)) ([9c8f6de](https://github.com/ublue-os/bluefin/commit/9c8f6de89f040618b7185ad975263922a499c13d))
+* exclude Syft ELF package cataloger ([#1182](https://github.com/ublue-os/bluefin/issues/1182)) ([dd7c210](https://github.com/ublue-os/bluefin/commit/dd7c210ffaa5ea6bb918958a0ab29669c4814d65))
+
+## [2.2.0](https://github.com/ublue-os/bluefin/compare/v2.1.0...v2.2.0) (2024-04-22)
+
+
+### Features
+
+* Add a ujust action to install ollama quadlet ([#1072](https://github.com/ublue-os/bluefin/issues/1072)) ([bb2bcac](https://github.com/ublue-os/bluefin/commit/bb2bcac065bacb65b0d2b018d0044a600647a2ec))
+* add askpass config ([#1156](https://github.com/ublue-os/bluefin/issues/1156)) ([d250e63](https://github.com/ublue-os/bluefin/commit/d250e63af9e764195d5c7bb11097833fa577ab3a))
+* add aurora files and aurora to build matrix ([#1095](https://github.com/ublue-os/bluefin/issues/1095)) ([9c82ed0](https://github.com/ublue-os/bluefin/commit/9c82ed03a92f582820e393307f0f08739e342942))
+* add caffeine extension ([#1089](https://github.com/ublue-os/bluefin/issues/1089)) ([9b9ac67](https://github.com/ublue-os/bluefin/commit/9b9ac678cafe152d1adf53f7d155e75d4f0b9226))
+* add dynamic wallpaper pkg Aurora ([#1135](https://github.com/ublue-os/bluefin/issues/1135)) ([d7fa8a5](https://github.com/ublue-os/bluefin/commit/d7fa8a58f880a2451ac59da85a992e9058c5ddc5))
+* add gnome searchlight ([#1129](https://github.com/ublue-os/bluefin/issues/1129)) ([e93a05d](https://github.com/ublue-os/bluefin/commit/e93a05d4f976cf3d764288360dc707b38aa7720b))
+* add GUI update icon ([#1093](https://github.com/ublue-os/bluefin/issues/1093)) ([a78318e](https://github.com/ublue-os/bluefin/commit/a78318e6389cfd65ad9c08605c79dc142976165d))
+* Add image sign detection for fastfetch ([#1169](https://github.com/ublue-os/bluefin/issues/1169)) ([1598ede](https://github.com/ublue-os/bluefin/commit/1598ede9d1bc0b6b240445ef0b83d7251f52c89e))
+* Add initramfs generation ([#1127](https://github.com/ublue-os/bluefin/issues/1127)) ([35f9340](https://github.com/ublue-os/bluefin/commit/35f9340871fd66408976ef13f207005fa4e83527))
+* add skeleton for aurora packagelist ([#1092](https://github.com/ublue-os/bluefin/issues/1092)) ([02388f7](https://github.com/ublue-os/bluefin/commit/02388f720803f12a9aec7ec4aaa226cc8c306ad0))
+* **aurora:** Add Kde branding via a theme ([#1140](https://github.com/ublue-os/bluefin/issues/1140)) ([80a3213](https://github.com/ublue-os/bluefin/commit/80a321391b53d8a9eb35255243dd37e99170e50c))
+* **bluefin:** Logos for Fastfetch ([#1165](https://github.com/ublue-os/bluefin/issues/1165)) ([beb9541](https://github.com/ublue-os/bluefin/commit/beb95410599b1f7a3c7bb1f1455d2d8c29a39a49))
+* **ci:** add image scanning workflow ([#1161](https://github.com/ublue-os/bluefin/issues/1161)) ([244b269](https://github.com/ublue-os/bluefin/commit/244b269b6746c739b8d970fd4b9682c2d4e34ee0))
+* config for fastfetch ([#1168](https://github.com/ublue-os/bluefin/issues/1168)) ([e41b30a](https://github.com/ublue-os/bluefin/commit/e41b30a00ec4d3ed1e9d1bfbd65b396d8a97fb41))
+* **f40:** Add Mutter patched with Xwayland scaling, Triple Buffering, and Nvidia copy optimization ([#1160](https://github.com/ublue-os/bluefin/issues/1160)) ([84a929d](https://github.com/ublue-os/bluefin/commit/84a929df068fd46fb8e9eedea372658053675ab2))
+* freshen up yafti ([#1087](https://github.com/ublue-os/bluefin/issues/1087)) ([c213070](https://github.com/ublue-os/bluefin/commit/c213070dd0ed363bf015bf425890a479b96c8382))
+* reorganize repo for Aurora builds ([#1091](https://github.com/ublue-os/bluefin/issues/1091)) ([3dc2b8a](https://github.com/ublue-os/bluefin/commit/3dc2b8ae5f753e75e6b5dc754f9443c8223653f2))
+
+
+### Bug Fixes
+
+* **40-dx:** temporarily removed devpod from 40 ([#1108](https://github.com/ublue-os/bluefin/issues/1108)) ([05bba8c](https://github.com/ublue-os/bluefin/commit/05bba8c048fc5af61bf92d9ae39cc0ab1e965a3a))
+* **Aurora:** Configure ksshaskpass in /etc/profile.d ([#1166](https://github.com/ublue-os/bluefin/issues/1166)) ([8dccfd4](https://github.com/ublue-os/bluefin/commit/8dccfd4b506b71c8b3a809368a32e0ef1fd922a0))
+* change switch-input-source keybinding ([#1146](https://github.com/ublue-os/bluefin/issues/1146)) ([cf11ba9](https://github.com/ublue-os/bluefin/commit/cf11ba9d897d2afdbb5dc967df0bf67b75436934))
+* change working dir to `/tmp` for `stress-ng` in `ujust benchmark` ([#1086](https://github.com/ublue-os/bluefin/issues/1086)) ([a17a41d](https://github.com/ublue-os/bluefin/commit/a17a41dead1e086cc28a9ae98276ef5d5e5cce72))
+* **ci:** fix variable names for gts/latest tagging ([#1106](https://github.com/ublue-os/bluefin/issues/1106)) ([e3d56f8](https://github.com/ublue-os/bluefin/commit/e3d56f802a0201dd242dbe98be803be723e6f264))
+* correct location for tmpfile ([#1145](https://github.com/ublue-os/bluefin/issues/1145)) ([e29298c](https://github.com/ublue-os/bluefin/commit/e29298c85203814f54e3ce4f6e096c48643b00c6))
+* don't exclude power profiles and tlp ([#1150](https://github.com/ublue-os/bluefin/issues/1150)) ([45658c2](https://github.com/ublue-os/bluefin/commit/45658c2850ee22439f0283d71b788c142355b5d8))
+* make bluefin logos contrast more. ([#1141](https://github.com/ublue-os/bluefin/issues/1141)) ([3712009](https://github.com/ublue-os/bluefin/commit/3712009aee6c9fcbb1507b4e6b3082ea264e49cc))
+* make sure quadlet is running before launching via shortcut ([#1164](https://github.com/ublue-os/bluefin/issues/1164)) ([c520f2c](https://github.com/ublue-os/bluefin/commit/c520f2c9f19453e353eada3603d323ed762c12cd))
+* remove binaries from image ([#1077](https://github.com/ublue-os/bluefin/issues/1077)) ([64c30ed](https://github.com/ublue-os/bluefin/commit/64c30edf156bfab70194dbcdf0e2f06967c815a4))
+* remove duplicate builds on merge queue and push ([#1131](https://github.com/ublue-os/bluefin/issues/1131)) ([0686642](https://github.com/ublue-os/bluefin/commit/0686642ef94341c22b5e00b744d9102e0ce2e04e))
+* remove switch-input-source keybinding ([#1148](https://github.com/ublue-os/bluefin/issues/1148)) ([df6d256](https://github.com/ublue-os/bluefin/commit/df6d25642128a4fe1925dfe9d4ffcce563e8ddcc))
+* remove tuned ([#1144](https://github.com/ublue-os/bluefin/issues/1144)) ([999342a](https://github.com/ublue-os/bluefin/commit/999342a79bbd7af2e16ae835b5d693dacb4f7470))
+* remove vestigial internal cockpit component ([#1096](https://github.com/ublue-os/bluefin/issues/1096)) ([804d048](https://github.com/ublue-os/bluefin/commit/804d048117e94c85b19be1a6274ac5ec73f5c602))
+* restore v4l2loopback module ([#1157](https://github.com/ublue-os/bluefin/issues/1157)) ([27183d9](https://github.com/ublue-os/bluefin/commit/27183d9af32a64063607ba498d1735bef1b66f6b))
+* source systemd-dx.sh from build-dx.sh script ([#1155](https://github.com/ublue-os/bluefin/issues/1155)) ([57fcbd3](https://github.com/ublue-os/bluefin/commit/57fcbd361928547689fdadf8f1f025e65ed75f85))
+* temp remove blur-my-shell 40 ([#1121](https://github.com/ublue-os/bluefin/issues/1121)) ([ea17d66](https://github.com/ublue-os/bluefin/commit/ea17d664aa160b22f048b06c021af59d87f49a02))
+* temporaliy disable v4l2loopback for 39 ([#1105](https://github.com/ublue-os/bluefin/issues/1105)) ([a80c618](https://github.com/ublue-os/bluefin/commit/a80c618ceff9d15a6ff70a3e6d65d95d57ed826f))
+* turn on search-light ([#1130](https://github.com/ublue-os/bluefin/issues/1130)) ([4eb8999](https://github.com/ublue-os/bluefin/commit/4eb899997f5b63af6f53b6ca7a89fd5a8427f470))
+* ujust ollama ([#1159](https://github.com/ublue-os/bluefin/issues/1159)) ([29b447d](https://github.com/ublue-os/bluefin/commit/29b447d4bcadd94ad0a87de1bb6d8abfc9a68406))
+* update quadlet popup messages ([#1174](https://github.com/ublue-os/bluefin/issues/1174)) ([f3fd9ea](https://github.com/ublue-os/bluefin/commit/f3fd9ea221560623c13f2468eb6140cb8bf789a2))
+* update ublue-system-setup ([#1152](https://github.com/ublue-os/bluefin/issues/1152)) ([088a578](https://github.com/ublue-os/bluefin/commit/088a578ef11c5ed2c6856266ec03247999a01179))
+
 ## [2.1.0](https://github.com/ublue-os/bluefin/compare/v2.0.0...v2.1.0) (2024-03-30)
 
 

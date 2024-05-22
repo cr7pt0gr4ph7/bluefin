@@ -10,13 +10,6 @@
 # fix-       = apply fix/patch/workaround for something
 # foo        = no verb is used for shortcuts or something deemed important enough to use a super memorable name
 
-alias brew-fleek := install-brew-fleek
-
-# Install "fleek" set of packages for brew | none, low, default, high
-install-brew-fleek level="high":
-    #!/usr/bin/env bash
-    curl --proto '=https' --tlsv1.2 -sSf -L https://brew.getfleek.dev/s/fleek | bash -s -- {{ level }}
-
 alias cockpit := setup-cockpit
 
 # Enable Cockpit for web-based system management | https://cockpit-project.org/
@@ -111,10 +104,10 @@ install-incus:
     #!/usr/bin/env bash
     source /usr/lib/ujust/ujust.sh
     CURRENT_IMAGE=$(rpm-ostree status -b --json | jq -r '.deployments[0]."container-image-reference"')
-    if grep -q "bluefin-dx" <<< $CURRENT_IMAGE
+    if grep -Eq "bluefin-dx|aurora-dx" <<< $CURRENT_IMAGE
     then
         echo 'Installing and configuring Incus.'
-        /usr/bin/bluefin-incus
+        /usr/libexec/bluefin-incus
     else
         echo "Developer mode is currently ${b}${red}Disabled${n}."
         echo "Run \"just devmode\" to turn on Developer mode."

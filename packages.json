@@ -18,10 +18,12 @@
 				"input-remapper",
 				"libimobiledevice",
 				"libxcrypt-compat",
+				"lm_sensors",
 				"make",
 				"mesa-libGLU",
 				"nerd-fonts",
 				"playerctl",
+				"printer-driver-brlaser",
 				"pulseaudio-utils",
 				"python3-pip",
 				"rclone",
@@ -43,20 +45,25 @@
 			],
 			"silverblue": [
 				"gnome-shell-extension-appindicator",
+				"gnome-shell-extension-blur-my-shell",
 				"gnome-shell-extension-caffeine",
 				"gnome-shell-extension-dash-to-dock",
 				"gnome-shell-extension-gsconnect",
 				"gnome-shell-extension-logo-menu",
 				"gnome-shell-extension-search-light",
+				"gnome-shell-extension-auto-power-profile",
 				"libgda-sqlite",
 				"libgda",
 				"libratbag-ratbagd",
 				"nautilus-gsconnect",
+				"openssh-askpass",
 				"yaru-theme"
 			],
 			"kinoite": [
 				"libadwaita-qt5",
 				"libadwaita-qt6",
+				"kde-runtime-docs",
+				"kdenetwork-filesharing",
 				"kdeplasma-addons",
 				"plasma-wallpapers-dynamic"
 			],
@@ -75,6 +82,7 @@
 				"code",
 				"containerd.io",
 				"dbus-x11",
+				"devpod",
 				"docker-ce",
 				"docker-ce-cli",
 				"docker-buildx-plugin",
@@ -139,38 +147,17 @@
 			"dx": []
 		}
 	},
-	"38": {
-		"include": {
-			"silverblue": [
-				"gnome-shell-extension-blur-my-shell",
-				"gnome-shell-extension-tailscale-status"
-			],
-			"dx": [
-				"distrobuilder",
-				"devpod",
-				"podman-plugins"
-			]
-		},
-		"exclude": {
-			"silverblue": [
-				"podman-docker"
-			],
-			"dx": []
-		}
-	},
 	"39": {
 		"include": {
 			"all": [
 				"input-leap"
 			],
 			"silverblue": [
-				"gnome-shell-extension-blur-my-shell",
 				"gnome-shell-extension-tailscale-gnome-qs",
 				"nautilus-open-any-terminal"
 			],
 			"dx": [
 				"distrobuilder",
-				"devpod",
 				"podman-plugins"
 			]
 		},

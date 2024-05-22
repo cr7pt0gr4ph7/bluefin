@@ -1,11 +1,12 @@
-# 󱍢 Welcome to Bluefin (󰂡eta) 
+# 󱍢 Welcome to Bluefin
 󱋩 `%IMAGE_NAME%:%IMAGE_TAG%`
 
 |  Command | Description |
 | ------- | ----------- |
-| `ujust`  | List all available commands |
-| `ujust toggle-user-motd` | Toggle this banner on/off | 
-| `ujust brew` | Install Homebrew (Strongly Recommended) |
+| `ujust --choose`  | Show available commands  |
+| `ujust toggle-user-motd` | Toggle banner on/off | 
+| `ujust bluefin-cli` | Enable terminal bling | 
+| `brew help` | Manage command line packages | 
 
 %TIP%
 

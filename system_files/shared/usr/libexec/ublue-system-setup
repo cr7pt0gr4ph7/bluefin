@@ -1,46 +1,23 @@
 #!/usr/bin/bash
+#shellcheck disable=SC2076
 
 IMAGE_INFO="/usr/share/ublue-os/image-info.json"
 IMAGE_NAME=$(jq -r '."image-name"' < $IMAGE_INFO)
 IMAGE_FLAVOR=$(jq -r '."image-flavor"' < $IMAGE_INFO)
 
+VEN_ID="$(cat /sys/devices/virtual/dmi/id/chassis_vendor)"
+CPU_VENDOR=$(grep "vendor_id" "/proc/cpuinfo" | uniq | awk -F": " '{ print $2 }')
+
 # SCRIPT VERSION
-HWS_VER=2
+HWS_VER=3
 HWS_VER_FILE="/etc/ublue/hws_version"
-HWS_VER_RAN=$(cat $HWS_VER_FILE)
+[[ -f "$HWS_VER_FILE" ]] && HWS_VER_RAN=$(cat $HWS_VER_FILE)
 
 # IMAGE IDENTIFIERS
 KNOWN_IMAGE_NAME_FILE="/etc/ublue/image_name"
-KNOWN_IMAGE_NAME=$(cat $KNOWN_IMAGE_NAME_FILE)
+[[ -f "$KNOWN_IMAGE_NAME_FILE" ]] && KNOWN_IMAGE_NAME=$(cat $KNOWN_IMAGE_NAME_FILE)
 KNOWN_IMAGE_FLAVOR_FILE="/etc/ublue/image_flavor"
-KNOWN_IMAGE_FLAVOR=$(cat $KNOWN_IMAGE_FLAVOR_FILE)
-
-# GLOBAL
-KARGS=$(rpm-ostree kargs)
-NEEDED_KARGS=""
-echo "Current kargs: $KARGS"
-mkdir -p /etc/ublue
-
-if [[ "$IMAGE_FLAVOR" =~ "nvidia" && ! "$KARGS" =~ "initcall_blacklist=simpledrm_platform_driver_init" ]]; then
-  NEEDED_KARGS="$NEEDED_KARGS --append=initcall_blacklist=simpledrm_platform_driver_init"
-fi
-
-if [[ $KARGS =~ "nomodeset" ]]; then
-  echo "Removing nomodeset"
-  NEEDED_KARGS="$NEEDED_KARGS --delete-if-present=nomodeset"
-fi
-
-if [[ ! $KARGS =~ "rd.luks.options" ]]; then
-  NEEDED_KARGS="$NEEDED_KARGS --append=rd.luks.options=discard"
-fi
-
-if [[ -n "$NEEDED_KARGS" ]]; then
-  echo "Found needed karg changes, applying the following: $NEEDED_KARGS"
-  plymouth display-message --text="Updating kargs - Please wait, this may take a while" || true
-  rpm-ostree kargs "${NEEDED_KARGS}" --reboot || exit 1
-else
-  echo "No karg changes needed"
-fi
+[[ -f "$KNOWN_IMAGE_FLAVOR_FILE" ]] && KNOWN_IMAGE_FLAVOR=$(cat $KNOWN_IMAGE_FLAVOR_FILE)
 
 # Run script if updated
 if [[ -f "$HWS_VER_FILE" && "$HWS_VER" = "$HWS_VER_RAN" ]]; then
@@ -53,6 +30,56 @@ if [[ -f "$HWS_VER_FILE" && "$HWS_VER" = "$HWS_VER_RAN" ]]; then
   fi
 fi
 
-echo "$HWS_VER" > $HWS_VER_FILE
+# GLOBAL
+KARGS=$(rpm-ostree kargs)
+NEEDED_KARGS=()
+echo "Current kargs: $KARGS"
+mkdir -p /etc/ublue
+
+if [[ "$IMAGE_FLAVOR" =~ "nvidia" && ! "$KARGS" =~ "initcall_blacklist=simpledrm_platform_driver_init" ]]; then
+  NEEDED_KARGS+=("--append-if-missing=initcall_blacklist=simpledrm_platform_driver_init")
+fi
+
+if [[ $KARGS =~ "nomodeset" ]]; then
+  echo "Removing nomodeset"
+  NEEDED_KARGS+=("--delete-if-present=nomodeset")
+fi
+
+if [[ ":Framework:" =~ ":$VEN_ID:" ]]; then
+  if [[ "GenuineIntel" == "$CPU_VENDOR" ]]; then
+    if [[ ! $KARGS =~ "hid_sensor_hub" ]]; then
+      echo "Intel Framework Laptop detected, applying needed keyboard fix"
+      NEEDED_KARGS+=("--append-if-missing=module_blacklist=hid_sensor_hub");
+    fi
+  fi
+fi
+
+#shellcheck disable=SC2128
+if [[ -n "$NEEDED_KARGS" ]]; then
+  echo "Found needed karg changes, applying the following: ${NEEDED_KARGS[*]}"
+  plymouth display-message --text="Updating kargs - Please wait, this may take a while" || true
+  rpm-ostree kargs "${NEEDED_KARGS[*]}" --reboot || exit 1
+else
+  echo "No karg changes needed"
+fi
+
+# FRAMEWORK 13 AMD FIXES
+if [[ ":Framework:" =~ ":$VEN_ID:" ]]; then
+  if [[ $SYS_ID == "Laptop ("* ]]; then
+    if [[ "AuthenticAMD" == "$CPU_VENDOR" ]]; then
+      if [[ ! -f /etc/modprobe.d/alsa.conf ]]; then
+        echo 'Fixing 3.5mm jack'
+        sudo tee /etc/modprobe.d/alsa.conf <<< "options snd-hda-intel index=1,0 model=auto,dell-headset-multi"
+        echo 0 | sudo tee /sys/module/snd_hda_intel/parameters/power_save
+      fi
+      if [[ ! -f /etc/udev/rules.d/20-suspend-fixes.rules ]]; then
+        echo 'Fixing suspend issue'
+        echo "ACTION==\"add\", SUBSYSTEM==\"serio\", DRIVERS==\"atkbd\", ATTR{power/wakeup}=\"disabled\"" > /etc/udev/rules.d/20-suspend-fixes.rules
+      fi
+    fi
+  fi
+fi
+
 echo "$IMAGE_NAME" > $KNOWN_IMAGE_NAME_FILE
 echo "$IMAGE_FLAVOR" > $KNOWN_IMAGE_FLAVOR_FILE
+echo "$HWS_VER" > $HWS_VER_FILE
