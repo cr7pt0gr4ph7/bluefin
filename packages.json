@@ -40,7 +40,7 @@
 				"usbmuxd",
 				"wireguard-tools",
 				"xprop",
-				"wl-clipboard", 
+				"wl-clipboard",
 				"zsh"
 			],
 			"silverblue": [
@@ -68,6 +68,7 @@
 			],
 			"dx": [
 				"adobe-source-code-pro-fonts",
+				"android-tools",
 				"btrfs-assistant",
 				"cascadia-code-fonts",
 				"cockpit-machines",
