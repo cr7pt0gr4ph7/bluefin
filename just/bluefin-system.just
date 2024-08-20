@@ -17,8 +17,7 @@ benchmark:
 
 # Configure Bluefin-CLI Terminal Experience with Brew
 bluefin-cli:
-    @brew bundle --file /usr/share/ublue-os/homebrew/bluefin-cli.Brewfile --no-lock
-    echo 'Installation complete ... please close and reopen your terminal!'
+    @/usr/libexec/ublue-bling.sh
 
 # Configure Bluefin-CLI Terminal Experience
 [private]
@@ -38,8 +37,8 @@ devmode:
     then
         echo ""
         echo "Before we can switch to the Bluefin Developer Experience"
-        echo "the current system needs an update. Please run 'just update'"
-        echo "and reboot your system when the update is finished."
+        echo "the current system needs an update. Please run 'ujust update'"
+        echo "and reboot your system when the update is finished"
         exit
     fi
     if grep -q "dx" <<< $CURRENT_IMAGE
@@ -64,6 +63,8 @@ devmode:
               NEW_IMAGE=$(echo $CURRENT_IMAGE | sed "s/aurora/aurora-dx/")
             fi
             rpm-ostree rebase $NEW_IMAGE
+            echo ""
+            echo "Use `ujust dx-group` to add your user to the correct groups and complete the installation"
         fi
     elif [ "$OPTION" = "Disable" ]
     then
@@ -275,9 +276,57 @@ rebase-helper:
     @/usr/bin/ublue-rollback-helper
 
 alias rollback-helper := rebase-helper
+alias switch-channel := rebase-helper
 
 update-ng:
     echo "Note: This command doesn't work if you have locally layered packages" 
     sudo bootc upgrade
     flatpak update -y
     brew upgrade
+
+# Toggle tailscale
+toggle-tailscale:
+    #!/bin/bash
+    set -euo pipefail
+    source /usr/lib/ujust/ujust.sh
+
+    TAILSCALED_STATUS="$(systemctl is-enabled tailscaled || true )"
+
+    if [ "$TAILSCALED_STATUS" == "enabled" ] || [ "$TAILSCALED_STATUS" == "disabled" ]; then
+        TAILSCALED="Installed"
+    else 
+        TAILSCALED="Not Found"
+        echo "${b}${red}Unable to enable or disable Tailscale.${n}"
+        echo "The tailscaled service must be present and either enabled or disabled to run this script."
+        echo "tailscaled service status: $TAILSCALED_STATUS"
+    fi
+
+    TAILSCALE_QS="$(gnome-extensions list | grep -q "tailscale@joaophi.github.com"; echo $?)"
+    if [ "$TAILSCALE_QS" == 0 ]; then
+      TAILSCALE_QS="Installed"
+    else
+      echo "The Tailscale QS extension for Gnome is not installed. Please install it and then run this script again."
+    fi
+
+    if [ "$TAILSCALE_QS" == "Installed" ] && [ "$TAILSCALED" == "Installed" ]; then
+      echo "Enable or disable Tailscale?"
+      TS_OPTION=$(ugum choose Enable Disable)
+
+      if [ "$TS_OPTION" = "Enable" ]; then
+        systemctl enable --now tailscaled
+        TAILSCALED_STATUS="$(systemctl is-enabled tailscaled || true )"
+        if [ "$TAILSCALED_STATUS" == "enabled" ]; then
+          gnome-extensions enable tailscale@joaophi.github.com
+          echo "${b}${green}Tailscale is enabled.${n}"
+          echo "If this is your first time using Tailscale, setup is necessary."
+          echo "Refer to Tailscale's documentation at https://tailscale.com/kb/1346/start."
+        fi
+      elif [ "$TS_OPTION" = "Disable" ]; then
+        systemctl disable --now tailscaled
+        TAILSCALED_STATUS="$(systemctl is-enabled tailscaled || true )"
+        if [ "$TAILSCALED_STATUS" == "disabled" ]; then
+          gnome-extensions disable tailscale@joaophi.github.com
+          echo "${b}${red}Tailscale is disabled.${n}"
+        fi
+      fi
+    fi

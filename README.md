@@ -2,12 +2,13 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2503a44c1105456483517f793af75ee7)](https://app.codacy.com/gh/ublue-os/bluefin/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade) 
 
+[![Aurora Stable](https://github.com/ublue-os/bluefin/actions/workflows/build-coreos-aurora.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-coreos-aurora.yml) [![Aurora Latest](https://github.com/ublue-os/bluefin/actions/workflows/build-latest-aurora.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-latest-aurora.yml) 
+
+[![Bluefin GTS](https://github.com/ublue-os/bluefin/actions/workflows/build-gts-bluefin.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-gts-bluefin.yml) [![Bluefin Stable](https://github.com/ublue-os/bluefin/actions/workflows/build-coreos-bluefin.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-coreos-bluefin.yml) [![Bluefin Latest](https://github.com/ublue-os/bluefin/actions/workflows/build-latest-bluefin.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-latest-bluefin.yml) 
+
 ## Bluefin - [projectbluefin.io](https://projectbluefin.io)
 
-[![bluefin 39](https://github.com/ublue-os/bluefin/actions/workflows/build-39-bluefin.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-39-bluefin.yml) [![bluefin 40](https://github.com/ublue-os/bluefin/actions/workflows/build-40-bluefin.yml/badge.svg)](https://github.com/ublue-os/bluefin/actions/workflows/build-40-bluefin.yml)
-
 ![image](https://github.com/ublue-os/bluefin/assets/1264109/b093bdec-40dc-48d2-b8ff-fcf0df390e8c)
-
 
 > "Evolution is a process of constant branching and expansion." - Stephen Jay Gould
 
@@ -29,16 +30,16 @@ Aurora is a delightful KDE desktop experience for end-users that are looking for
 
 Both Aurora and Bluefin strive to offer a curated out of the box experience for users, they only differ in the default desktop and recommended applications: Bluefin uses GNOME, Aurora uses KDE. They are both maintained and built in this repository.  
 
-# Documentation
+## Documentation
 
 1. [Discussions and Announcements](https://universal-blue.discourse.group/c/bluefin/6) - strongly recommended!
-2. [Administrator's Guide](https://universal-blue.discourse.group/t/bluefin-administrators-guide/40)
+2. [Documentation](https://docs.projectbluefin.io/)
 
-## Secure Boot
+### Secure Boot
 
 Secure Boot is supported by default on our systems, providing an additional layer of security. After the first installation, you will be prompted to enroll the secure boot key in the BIOS.
 
-Enter the password `ublue-os` 
+Enter the password `universalblue` 
 when prompted to enroll our key.
 
 If this step is not completed during the initial setup, you can manually enroll the key by running the following command in the terminal:
@@ -47,17 +48,17 @@ If this step is not completed during the initial setup, you can manually enroll 
 ujust enroll-secure-boot-key
 `
 
-Secure boot is supported with our custom key. The pub key can be found in the root of the bazzite repository [here](https://github.com/ublue-os/bazzite/blob/main/secure_boot.der).
+Secure boot is supported with our custom key. The pub key can be found in the root of the akmods repository [here](https://github.com/ublue-os/akmods/raw/main/certs/public_key.der).
 If you'd like to enroll this key prior to installation or rebase, download the key and run the following:
 
 ```bash
 sudo mokutil --timeout -1
-sudo mokutil --import secure_boot.der
+sudo mokutil --import public_key.der
 ```
 
-### Note:
-If you encounter an issue with a password being recognized as incorrect, try using the `-` key on the numpad instead.
+#### Note
 
+If you encounter an issue with a password being recognized as incorrect, try using the `-` key on the numpad instead.
 
 ## Repobeats
 

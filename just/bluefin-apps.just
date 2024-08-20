@@ -51,6 +51,12 @@ setup-cockpit ACTION="":
       OPTION="Enable Cockpit"
     fi
     if [[ "${OPTION,,}" =~ ^enable ]]; then
+      echo "${green}${b}Enabling${n} pmlogger"
+      sudo mkdir /var/lib/pcp/tmp
+      sudo mkdir /var/log/pcp/pmlogger
+      sudo chown -R pcp:pcp /var/lib/pcp
+      sudo chown pcp:pcp /var/log/pcp/pmlogger
+      sudo systemctl enable --now pmlogger
       echo "${green}${b}Enabling${n} Cockpit"
       sudo systemctl enable cockpit.service
       echo "$(Urllink "http://localhost:9090" "Open Cockpit${n}") -> http://localhost:9090"
@@ -79,23 +85,6 @@ install-jetbrains-toolbox:
     tar zxf jetbrains-toolbox-"${BUILD_VERSION}".tar.gz
     echo "Launching JetBrains Toolbox"
     ./jetbrains-toolbox-"${BUILD_VERSION}"/jetbrains-toolbox
-
-alias atuin := install-atuin
-
-# Add atuin
-install-atuin:
-    #!/usr/bin/bash 
-    shell=$(basename $SHELL) 
-    if test $shell = "fish"; then 
-        echo "Adding atuin to your config.fish"
-        printf '\nif status is-interactive\n\tif type -q atuin\n\t\tatuin init fish | source\n\tend\nend\n' >> ${XDG_CONFIG_HOME:-$HOME/.config}/fish/config.fish
-    elif test $shell = "zsh"; then 
-        echo "Adding atuin to your .zshrc"
-        printf '\n[[ "$(command -v atuin)" ]] && eval "$(atuin init zsh)"\n' >> ${ZDOTDIR:-$HOME}/.zshrc 
-    elif test $shell = "bash"; then 
-        echo "Adding bash-prexec and atuin to your .bashrc" 
-        printf '\n[[ -f /usr/share/bash-prexec ]] && source /usr/share/bash-prexec\n[[ "$(command -v atuin)" ]] && eval "$(atuin init bash)"\n' >> ~/.bashrc
-    fi
 
 alias incus := install-incus
 
