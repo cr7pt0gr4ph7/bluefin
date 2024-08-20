@@ -105,7 +105,7 @@ configure-shell ACTION="":
     if [ -z "$OPTION" ]; then
       exit 0
     else
-      sudo usermod $USER --shell /usr/bin/$OPTION 
+      sudo usermod $USER --shell /usr/bin/$OPTION
       printf "${USER}'s shell is now %s.\n" "$(cat /etc/passwd | grep ":$UID:" | cut '-d:' '-f7')"
     fi
 
@@ -205,7 +205,7 @@ configure-vfio ACTION="":
         if [[ ${CPU_VENDOR} == "AuthenticAMD" ]]; then
           VENDOR_KARG="amd_iommu=on"
         elif [[ ${CPU_VENDOR} == "GenuineIntel" ]]; then
-          VENDOR_KARG="intel_iommu=on"  
+          VENDOR_KARG="intel_iommu=on"
         fi
         if [[ ${VENDOR_KARG} == "unset" ]]; then
           echo "Failed to get CPU vendor, exiting..."
@@ -253,6 +253,22 @@ configure-vfio ACTION="":
       sudo /usr/libexec/bluefin-dx-kvmfr-setup
     fi
 
+# Configure threadirqs parameter to allow real-time audio processing
+configure-rt-audio ACTION="":
+    #!/usr/bin/bash
+    if [ "$ACTION" == "on" ]; then
+      echo 'Enabling threadirqs kernel parameter'
+      rpm-ostree kargs \
+      --append-if-missing=threadirqs
+    else
+      echo 'Disabling threadirqs kernel parameter'
+      rpm-ostree kargs \
+      --delete-if-present=threadirqs
+    else
+      echo 'Please specify either "on" or "off" as an argument.'
+      exit 0
+    fi
+
 # Install system flatpaks for rebasers
 [private]
 install-system-flatpaks:
@@ -279,7 +295,7 @@ alias rollback-helper := rebase-helper
 alias switch-channel := rebase-helper
 
 update-ng:
-    echo "Note: This command doesn't work if you have locally layered packages" 
+    echo "Note: This command doesn't work if you have locally layered packages"
     sudo bootc upgrade
     flatpak update -y
     brew upgrade
@@ -294,7 +310,7 @@ toggle-tailscale:
 
     if [ "$TAILSCALED_STATUS" == "enabled" ] || [ "$TAILSCALED_STATUS" == "disabled" ]; then
         TAILSCALED="Installed"
-    else 
+    else
         TAILSCALED="Not Found"
         echo "${b}${red}Unable to enable or disable Tailscale.${n}"
         echo "The tailscaled service must be present and either enabled or disabled to run this script."
