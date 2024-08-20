@@ -16,6 +16,7 @@ on:
         value: ${{ jobs.check.outputs.images }}
 env:
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  BASE_IMAGE_REGISTRY: ghcr.io/ublue-os
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}
@@ -321,11 +322,11 @@ jobs:
           command: |
             # pull the base image used for FROM in containerfile so
             # we can retry on that unfortunately common failure case
-            podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}-${{ env.image_flavor }}:${{ env.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/akmods:${{ env.AKMODS_FLAVOR }}-${{ env.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/akmods-nvidia:${{ env.AKMODS_FLAVOR }}-${{ env.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/akmods-zfs:coreos-stable-${{ env.fedora_version }}
-            podman pull ${{ env.IMAGE_REGISTRY }}/${{ env.AKMODS_FLAVOR }}-kernel:${{ env.kernel_release }}
+            podman pull ${{ env.BASE_IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}-${{ env.image_flavor }}:${{ env.fedora_version }}
+            podman pull ${{ env.BASE_IMAGE_REGISTRY }}/akmods:${{ env.AKMODS_FLAVOR }}-${{ env.fedora_version }}
+            podman pull ${{ env.BASE_IMAGE_REGISTRY }}/akmods-nvidia:${{ env.AKMODS_FLAVOR }}-${{ env.fedora_version }}
+            podman pull ${{ env.BASE_IMAGE_REGISTRY }}/akmods-zfs:coreos-stable-${{ env.fedora_version }}
+            podman pull ${{ env.BASE_IMAGE_REGISTRY }}/${{ env.AKMODS_FLAVOR }}-kernel:${{ env.kernel_release }}
 
       # Build image using Buildah action
       - name: Build Image
