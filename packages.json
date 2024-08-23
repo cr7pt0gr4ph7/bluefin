@@ -116,6 +116,7 @@
 				"kernel-tools",
 				"kcli",
 				"libvirt",
+				"libvirt-nss",
 				"lxc",
 				"lxd-agent",
 				"lxd",
