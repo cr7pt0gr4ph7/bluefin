@@ -67,7 +67,6 @@ jobs:
             image_flavor: surface-nvidia
 
           # Exclude image flavors that I do not need
-          - image_flavor: nvidia
           - image_flavor: asus
           - image_flavor: asus-nvidia
           - image_flavor: framework
