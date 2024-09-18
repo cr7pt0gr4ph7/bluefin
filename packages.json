@@ -116,6 +116,7 @@
 				"js-d3-flame-graph",
 				"kernel-tools",
 				"kcli",
+				"latencytop",
 				"libvirt",
 				"libvirt-nss",
 				"lxc",
