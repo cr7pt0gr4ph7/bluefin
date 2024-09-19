@@ -1,0 +1,452 @@
+<?xml version="1.0"?>
+<ThermalConfiguration>
+  <Platform>
+    <Name>Custom Configuration</Name>
+    <!--
+      Restrict this configuration to our specific board.
+      One could also use <UUID>*</UUID> to apply it
+      to all boards.
+    -->
+    <UUID>b5fa452c-d089-11e1-8f01-90206f242f6f</UUID>
+    <ProductName>*</ProductName>
+    <!--
+      Power/Performance Preference: QUIET | PERFORMANCE
+      QUIET mode will only use passive cooling device.
+      PERFORMANCE will only select active devices (i.e. fans).
+    -->
+    <!-- <Preference>PERFORMANCE</Preference> -->
+    <ThermalSensors>
+      <ThermalSensor>
+        <!-- coretemp-isa-0000 -->
+        <!-- CPU Package Temperature, seems to work correctly -->
+        <Type>x86_pkg_temp</Type>
+        <Path>/sys/class/thermal/thermal_zone2/</Path>
+        <AsyncCapable>1</AsyncCapable>
+      </ThermalSensor>
+      <ThermalSensor>
+        <!-- acpitz-acpi-0 -->
+        <Type>acpitz</Type>
+        <AsyncCapable>0</AsyncCapable>
+      </ThermalSensor>
+      <ThermalSensor>
+        <Type>acpitz</Type>
+        <Path>/sys/class/thermal/thermal_zone1/</Path>
+        <AsyncCapable>0</AsyncCapable>
+      </ThermalSensor>
+      <!-- <ThermalSensor> -->
+        <!-- BAT1-acpi-0 -->
+        <!-- Battery Voltage & Current -->
+        <!-- Might be bogus values -->
+        <!-- <Type>acpitz</Type>
+        <Path>/sys/class/thermal/thermal_zone1/</Path>
+        <AsyncCapable>0</AsyncCapable>
+      </ThermalSensor> -->
+      <!-- nouveau-pci-0100 -->
+      <!-- Current temperature returned as N/A -->
+      <!--
+        hwmon0/name->ADP1
+        hwmon1/name->acpitz
+        hwmon2/name->BAT1
+        hwmon3/name->nouveau
+        hwmon4/name->coretemp
+      -->
+      <ThermalSensor>
+        <Type>hwmon</Type>
+        <!-- temp1_label: Package id 0 -->
+        <Path>/sys/class/hwmon/hwmon4/temp1_input</Path>
+        <AsyncCapable>0</AsyncCapable>
+      </ThermalSensor>
+      <ThermalSensor>
+        <Type>hwmon</Type>
+        <!-- temp2_label: Core 0 -->
+        <Path>/sys/class/hwmon/hwmon4/temp2_input</Path>
+        <AsyncCapable>0</AsyncCapable>
+      </ThermalSensor>
+      <ThermalSensor>
+        <Type>hwmon</Type>
+        <!-- temp3_label: Core 1 -->
+        <Path>/sys/class/hwmon/hwmon4/temp3_input</Path>
+        <AsyncCapable>0</AsyncCapable>
+      </ThermalSensor>
+      <ThermalSensor>
+        <Type>hwmon</Type>
+        <!-- temp4_label: Core 2 -->
+        <Path>/sys/class/hwmon/hwmon4/temp4_input</Path>
+        <AsyncCapable>0</AsyncCapable>
+      </ThermalSensor>
+      <ThermalSensor>
+        <!-- temp5_label: Core 3 -->
+        <Type>hwmon</Type>
+        <Path>/sys/class/hwmon/hwmon4/temp5_input</Path>
+        <AsyncCapable>0</AsyncCapable>
+      </ThermalSensor>
+    </ThermalSensors>
+    <ThermalZones>
+      <ThermalZone>
+        <Type>acpitz</Type>
+        <TripPoints>
+          <TripPoint>
+            <SensorType>acpitz</SensorType>
+            <Temperature>104000</Temperature>
+            <Type>max</Type>
+          </TripPoint>
+          <TripPoint>
+            <SensorType>acpitz</SensorType>
+            <Temperature>102000</Temperature>
+            <type>passive</type>
+          </TripPoint>
+          <TripPoint>
+            <SensorType>acpitz</SensorType>
+            <Temperature>71000</Temperature>
+            <type>active</type>
+          </TripPoint>
+          <TripPoint>
+            <SensorType>acpitz</SensorType>
+            <Temperature>55000</Temperature>
+            <type>active</type>
+          </TripPoint>
+        </TripPoints>
+      </ThermalZone>
+      <ThermalZone>
+        <Type>acpitz</Type>
+        <TripPoints>
+          <TripPoint>
+            <SensorType>acpitz</SensorType>
+            <Temperature>104000</Temperature>
+            <Type>max</Type>
+          </TripPoint>
+          <TripPoint>
+            <SensorType>acpitz</SensorType>
+            <Temperature>102000</Temperature>
+            <type>passive</type>
+          </TripPoint>
+        </TripPoints>
+      </ThermalZone>
+      <ThermalZone>
+        <Type>cpu</Type>
+        <TripPoints>
+          <TripPoint>
+            <SensorType>x86_pkg_temp</SensorType>
+            <!-- critical -->
+            <!-- Temperature at which to take action -->
+            <Temperature>104000</Temperature>
+            <!--
+              Trip Point Type: MAX | PASSIVE | ACTIVE
+              If a MAX type is specified, then daemon will use PID control
+              to aggressively throttle to avoid reaching this temperature.
+            -->
+            <Type>max</Type>
+				    <!--
+              Control Type: SEQUENTIAL | PARALLEL
+					    When a trip point temp is violated, a number of cooling device
+              can be activated. If control type is SEQUENTIAL, it will exhaust
+              the first cooling device before trying next.
+					  -->
+          </TripPoint>
+          <!-- <TripPoint>
+            <SensorType>x86_pkg_temp</SensorType>
+            <Temperature>102000</Temperature>
+            <Type>passive</type>
+          </TripPoint> -->
+          <!--
+            TRIP POINT AT 70 °C:
+            Our desired temperature set point
+          -->
+          <TripPoint>
+            <SensorType>x86_pkg_temp</SensorType>
+            <Temperature>70000</Temperature>
+            <!--
+              Should be type: "passive", but we want to be able to use both
+              fans and power controls to keep our laptops temperature under
+              control, to prevent the keyboard from heating up.
+            -->
+            <type>passive</type>
+            <!-- <type>active</type> -->
+            <ControlType>sequential</ControlType>
+            <!-- intel_rapl is locked by BIOS, cannot use it on this computer -->
+            <!--
+            <CoolingDevice>
+              <Index>11</Index>
+              <Type>rapl_controller</Type>
+              <Influence>50</Influence>
+              <SamplingPeriod>3</SamplingPeriod>
+            </CoolingDevice>
+            -->
+            <CoolingDevice>
+              <Index>12</Index>
+              <Type>intel_pstate</Type>
+              <Influence>40</Influence>
+              <SamplingPeriod>6</SamplingPeriod>
+            </CoolingDevice>
+            <!--<CoolingDevice>
+              <Index>10</Index>
+              <Type>intel_powerclamp</Type>
+              <Influence>30</Influence>
+              <SamplingPeriod>3</SamplingPeriod>
+            </CoolingDevice>-->
+            <!-- <CoolingDevice>
+              <Index>13</Index>
+              <Type>cpufreq</Type>
+              <Influence>20</Influence>
+              <SamplingPeriod>3</SamplingPeriod>
+            </CoolingDevice> -->
+            <!-- <CoolingDevice>
+              <Type>Processor</Type>
+              <Influence>10</Influence>
+              <SamplingPeriod>5</SamplingPeriod>
+            </CoolingDevice> -->
+            <!-- <CoolingDevice>
+              <index>9</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>8</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>7</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>6</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>5</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>4</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>3</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>2</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>1</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>0</index>
+              <type>Processor</type>
+            </CoolingDevice> -->
+          </TripPoint>
+          <!--
+            TRIP POINT AT 50 °C:
+            Make the fans kick in pretty early to avoid performance drops.
+          -->
+          <TripPoint>
+            <SensorType>x86_pkg_temp</SensorType>
+            <Temperature>50000</Temperature>
+            <type>active</type>
+            <ControlType>parallel</ControlType>
+            <CoolingDevice>
+              <Index>1</Index>
+              <Type>Fan</Type>
+              <SamplingPeriod>5</SamplingPeriod>
+            </CoolingDevice>
+            <CoolingDevice>
+              <Index>0</Index>
+              <Type>Fan</Type>
+              <SamplingPeriod>5</SamplingPeriod>
+            </CoolingDevice>
+          </TripPoint>          <!-- <TripPoint> -->
+            <!--
+              TRIP POINT AT 95°C:
+              We should have never gotten this hot.
+              Aggressively cool down using everything we got,
+              at the cost of performance.
+            -->
+            <!-- <SensorType>x86_pkg_temp</SensorType>
+            <Temperature>96000</Temperature>
+
+            <Type>active</Type>
+            <ControlType>parallel</ControlType> -->
+            <!-- Cooling Devices to be used-->
+            <!-- intel_rapl is locked by BIOS, cannot use it on this computer -->
+            <!--
+            <CoolingDevice>
+              <Index>11</Index>
+              <Type>rapl_controller</Type>
+              <Influence>50</Influence>
+              <SamplingPeriod>3</SamplingPeriod>
+            </CoolingDevice>
+            -->
+            <!-- <CoolingDevice>
+              <Index>12</Index>
+              <Type>intel_pstate</Type> -->
+              <!--
+                Influence will be used order cooling devices.
+                First cooling device with highest influence will be used.
+              -->
+              <!-- <influence>0</influence> -->
+              <!--
+                Delay (in seconds) in using this cooling device.
+                It takes some time to actually cool a zone after
+                a cooling device has been turned on.
+              -->
+              <!-- <SamplingPeriod>12</SamplingPeriod> -->
+            <!-- </CoolingDevice>
+            <CoolingDevice>
+              <Index>10</Index>
+              <Type>intel_powerclamp</Type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <Index>13</Index>
+              <Type>cpufreq</Type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>9</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>8</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>7</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>6</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>5</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>4</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>3</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>2</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>1</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <index>0</index>
+              <type>Processor</type>
+            </CoolingDevice>
+            <CoolingDevice>
+              <Type>LCD</Type>
+            </CoolingDevice> -->
+          <!-- </TripPoint> -->
+        </TripPoints>
+      </ThermalZone>
+    </ThermalZones>
+    <CoolingDevices>
+      <CoolingDevice>
+        <Type>Fan</Type>
+        <Path>/sys/class/thermal/cooling_device0</Path>
+        <!-- MinState and MaxState can be read from SysFS -->
+        <!--
+        <Path>/sys/class/thermal/cooling_device0/cur_state</Path>
+        <MinState>0</MinState>
+        <MaxState>1</MaxState>
+        -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>Fan</Type>
+        <Path>/sys/class/thermal/cooling_device1</Path>
+        <!-- MinState and MaxState can be read from SysFS -->
+        <!--
+        <Path>/sys/class/thermal/cooling_device1/cur_state</Path>
+        <MinState>0</MinState>
+        <MaxState>1</MaxState>
+        -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>Processor</Type>
+        <Path>/sys/class/thermal/cooling_device2</Path>
+        <!-- <MinState>0</MinState>
+        <MaxState>3</MaxState> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>Processor</Type>
+        <Path>/sys/class/thermal/cooling_device3</Path>
+        <!-- <MinState>0</MinState>
+        <MaxState>3</MaxState> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>Processor</Type>
+        <Path>/sys/class/thermal/cooling_device4</Path>
+        <!-- <MinState>0</MinState>
+        <MaxState>3</MaxState> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>Processor</Type>
+        <Path>/sys/class/thermal/cooling_device5</Path>
+        <!-- <MinState>0</MinState>
+        <MaxState>3</MaxState> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>Processor</Type>
+        <Path>/sys/class/thermal/cooling_device6</Path>
+        <!-- <MinState>0</MinState>
+        <MaxState>3</MaxState> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>Processor</Type>
+        <Path>/sys/class/thermal/cooling_device7</Path>
+        <!-- <MinState>0</MinState>
+        <MaxState>3</MaxState> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>Processor</Type>
+        <Path>/sys/class/thermal/cooling_device8</Path>
+        <!-- <MinState>0</MinState>
+        <MaxState>3</MaxState> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>Processor</Type>
+        <Path>/sys/class/thermal/cooling_device9</Path>
+        <!-- <MinState>0</MinState>
+        <MaxState>3</MaxState> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>intel_powerclamp</Type>
+        <Path>/sys/class/thermal/cooling_device10</Path>
+        <MinState>0</MinState>
+        <MaxState>100</MaxState>
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>rapl_controller</Type>
+        <!-- <Path>/sys/devices/virtual/powercap/intel-rapl/intel-rapl:0</Path> -->
+        <!-- <MinState>45000000</MinState>
+        <MaxState>22500002</MaxState>
+        <PidControl>
+          <kp>-1000</kp>
+          <kd>100</kd>
+          <ki>10</ki>
+        </PidControl> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>intel_pstate</Type>
+        <!-- <Path>/sys/devices/system/cpu/intel_pstate</Path>
+        <MinState>0</MinState>
+        <MaxState>100</MaxState> -->
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>cpufreq</Type>
+      </CoolingDevice>
+      <CoolingDevice>
+        <Type>LCD</Type>
+        <!-- <MinState>0</MinState>
+        <MaxState>4882</MaxState> -->
+      </CoolingDevice>
+    </CoolingDevices>
+  </Platform>
+</ThermalConfiguration>
