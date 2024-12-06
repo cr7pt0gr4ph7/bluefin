@@ -4,8 +4,10 @@
 			"all": [
 				"adcli",
 				"alsa-tools",
+				"adw-gtk3-theme",
 				"bash-color-prompt",
 				"bcache-tools",
+				"borgbackup",
 				"bootc",
 				"evtest",
 				"epson-inkjet-printer-escpr",
@@ -17,6 +19,7 @@
 				"freeipa-client",
 				"fuse-encfs",
 				"gcc",
+				"git-credential-libsecret",
 				"glow",
 				"gum",
 				"hplip",
@@ -24,6 +27,7 @@
 				"ifuse",
 				"input-leap",
 				"input-remapper",
+				"jetbrains-mono-fonts-all",
 				"libimobiledevice",
 				"libxcrypt-compat",
 				"libsss_autofs",
@@ -33,7 +37,6 @@
 				"nerd-fonts",
 				"oddjob-mkhomedir",
 				"opendyslexic-fonts",
-				"playerctl",
 				"printer-driver-brlaser",
 				"pulseaudio-utils",
 				"python3-pip",
@@ -44,6 +47,7 @@
 				"samba-winbind-clients",
 				"samba-winbind-modules",
 				"samba",
+				"setools-console",
 				"solaar",
 				"sssd-ad",
 				"sssd-ipa",
@@ -59,7 +63,7 @@
 				"zsh"
 			],
 			"silverblue": [
-				"simple-scan",
+				"cryfs",
 				"gnome-shell-extension-appindicator",
 				"gnome-shell-extension-blur-my-shell",
 				"gnome-shell-extension-caffeine",
@@ -68,24 +72,25 @@
 				"gnome-shell-extension-logo-menu",
 				"gnome-shell-extension-search-light",
 				"gnome-shell-extension-tailscale-gnome-qs",
-				"libgda-sqlite",
 				"libgda",
+				"libgda-sqlite",
 				"libratbag-ratbagd",
 				"nautilus-gsconnect",
 				"nautilus-open-any-terminal",
 				"openssh-askpass",
+				"simple-scan",
 				"yaru-theme",
 				"zenity"
 			],
 			"kinoite": [
-				"skanpage",
-				"libadwaita-qt5",
-				"libadwaita-qt6",
 				"kde-runtime-docs",
 				"kdenetwork-filesharing",
 				"kdeplasma-addons",
 				"kdialog",
-				"plasma-wallpapers-dynamic"
+				"libadwaita-qt5",
+				"libadwaita-qt6",
+				"plasma-wallpapers-dynamic",
+				"skanpage"
 			],
 			"dx": [
 				"adobe-source-code-pro-fonts",
@@ -95,10 +100,10 @@
 				"bpftrace",
 				"btrfs-assistant",
 				"cascadia-code-fonts",
+				"cockpit-bridge",
 				"cockpit-machines",
 				"cockpit-networkmanager",
 				"cockpit-ostree",
-				"cockpit-pcp",
 				"cockpit-podman",
 				"cockpit-selinux",
 				"cockpit-storaged",
@@ -116,7 +121,6 @@
 				"git-gui",
 				"gitk",
 				"genisoimage",
-				"git-credential-libsecret",
 				"google-droid-sans-mono-fonts",
 				"google-go-mono-fonts",
 				"ibm-plex-mono-fonts",
@@ -131,14 +135,15 @@
 				"libvirt",
 				"libvirt-nss",
 				"lxc",
-				"lxd-agent",
-				"lxd",
 				"mozilla-fira-mono-fonts",
 				"nicstat",
 				"numactl",
+				"osbuild-selinux",
 				"p7zip-plugins",
 				"p7zip",
+				"podman-bootc",
 				"podman-compose",
+				"podman-machine",
 				"podman-tui",
 				"podmansh",
 				"powerline-fonts",
@@ -164,6 +169,7 @@
 				"umoci",
 				"virt-manager",
 				"virt-viewer",
+				"virt-v2v",
 				"ydotool"
 			]
 		},
@@ -176,9 +182,9 @@
 			],
 			"silverblue": [
 				"gnome-extensions-app",
+				"gnome-shell-extension-background-logo",
 				"gnome-software-rpm-ostree",
-				"gnome-terminal-nautilus",
-				"gnome-tour"
+				"gnome-terminal-nautilus"
 			],
 			"kinoite": [
 				"krfb",
@@ -188,35 +194,42 @@
 			"dx": []
 		}
 	},
-	"39": {
+	"40": {
 		"include": {
-			"all": [],
+			"all": [
+				"ptyxis"
+			],
 			"silverblue": [],
 			"dx": [
-				"distrobuilder",
-				"podman-plugins"
+				"lxd-agent",
+				"lxd"
 			]
 		},
 		"exclude": {
 			"all": [],
 			"silverblue": [],
+			"kinoite": [],
 			"dx": []
 		}
 	},
-	"40": {
+	"41": {
 		"include": {
 			"all": [
-				"ptyxis",
-				"scx-scheds"
+				"google-noto-fonts-all"
 			],
-			"silverblue": [],
-			"dx": []
+			"kinoite": [
+				"ptyxis"
+			],
+			"silverblue": []
 		},
 		"exclude": {
-			"all":	[],
+			"all": [],
 			"silverblue": [],
+			"kinoite": [
+				"plasma-welcome",
+				"plasma-welcome-fedora"
+			],
 			"dx": []
 		}
 	}
-
 }

@@ -1,7 +1,7 @@
 # Welcome to Aurora
 
 🔭  `%IMAGE_NAME%:%IMAGE_TAG%`
-Let's trace the stars.
+Hello, stargazer.
 
 |  Command | Description |
 | ------- | ----------- |
@@ -15,3 +15,5 @@ Let's trace the stars.
 - 󰊤 [Issues](https://issues.projectbluefin.io)
 - 󰈙 [Documentation](http://docs.projectbluefin.io/)
 - 󰊌 [Discuss](https://community.projectbluefin.io/)
+
+%KEY_WARN%

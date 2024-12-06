@@ -2,22 +2,26 @@ name: Reusable ISO
 on:
   workflow_call:
     inputs:
+      image_flavors:
+        description: "JSON string of flavors to build, '[main, nvidia, hwe, hwe-nvidia]'"
+        default: "['main', 'nvidia']"
+        type: string
       brand_name:
-        description: "'aurora' or 'bluefin'"
+        description: "The Brand Name: bluefin or aurora"
         required: true
         type: string
-      fedora_version:
-        description: "The Fedora release version: 38, 39, 40, etc"
+      stream_name:
+        description: "The Fedora Version: gts, stable, or latest"
         required: true
         type: string
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-iso
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}-iso
   cancel-in-progress: true
 
 jobs:
   build-iso:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
@@ -25,144 +29,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_flavor:
-          - main
-          - nvidia
-          - asus
-          - asus-nvidia
-          - surface
-          - surface-nvidia
-        base_name:
-          - ${{ inputs.brand_name }}
-          - ${{ inputs.brand_name }}-dx
-        fedora_version:
-          - ${{ inputs.fedora_version }}
-        exclude:
-          - fedora_version: gts
-            image_flavor: asus
-          - fedora_version: gts
-            image_flavor: asus-nvidia
-          - fedora_version: stable
-            image_flavor: asus
-          - fedora_version: stable
-            image_flavor: asus-nvidia
-          - fedora_version: stable
-            image_flavor: surface
-          - fedora_version: stable
-            image_flavor: surface-nvidia
+        image_flavor: ${{ fromJson(inputs.image_flavors) }}
+        base_name: ["${{ inputs.brand_name }}", "${{ inputs.brand_name }}-dx"]
+        stream_name: ["${{ inputs.stream_name }}"]
 
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Install Just
+        shell: bash
+        run: |
+          set -eoux pipefail
+          JUST_VERSION=$(curl -L https://api.github.com/repos/casey/just/releases/latest | jq -r '.tag_name')
+          curl -sSLO https://github.com/casey/just/releases/download/${JUST_VERSION}/just-${JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz
+          tar -zxvf just-${JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz -C /tmp just
+          sudo mv /tmp/just /usr/local/bin/just
+          rm -f just-${JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz
+
+      - name: Check Just Syntax
+        shell: bash
+        run: |
+          just check
+
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
 
-      - name: Checkout Repo
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
-
-      - name: Matrix Variables
-        run: |
-          if [[ "${{ matrix.image_flavor }}" == "main" ]]; then
-            echo "IMAGE_NAME=${{ matrix.base_name }}" >> $GITHUB_ENV
-          else
-            echo "IMAGE_NAME=${{ format('{0}-{1}', matrix.base_name, matrix.image_flavor) }}" >> $GITHUB_ENV
-          fi
-          if [[ ${{ inputs.brand_name }} == "bluefin" ]]; then
-            echo "VARIANT=Silverblue" >> $GITHUB_ENV
-          elif [[ ${{ inputs.brand_name }} == "aurora" ]]; then
-            echo "VARIANT=Kinoite" >> $GITHUB_ENV
-          fi
-
-      - name: Get Current Fedora Version
-        id: labels
+      - name: Build ISO
         shell: bash
         run: |
-          set -eo pipefail
-          kernel_release=$(skopeo inspect docker://ghcr.io/ublue-os/${{ env.IMAGE_NAME }}:${{ inputs.fedora_version }} | jq -r '.Labels["ostree.linux"] | split(".x86_64")[0]')
-          fedora_version=$(echo $kernel_release | grep -oP 'fc\K[0-9]+')
-          echo "kernel_release=$kernel_release" >> $GITHUB_OUTPUT
-          echo "fedora_version=$fedora_version" >> $GITHUB_OUTPUT
-
-      - name: Set Image Tag
-        id: generate-tag
-        shell: bash
-        run: |
-          TAG="${{ inputs.fedora_version }}"
-
-          if [[ "${{ github.ref_name }}" == "testing" ]]; then
-            if [[ "${{ inputs.fedora_version }}" == "true" ]]; then
-              TAG="gts-testing"
-            elif [[ "${{ inputs.fedora_version }}" == "true" ]]; then
-              TAG="stable-testing"
-            elif [[ "${{ inputs.fedora_version }}" == "true" ]]; then
-              TAG="testing"
-            fi
-          fi
-
-          # Would like to implement in the future. This will allow us to support image tags from a PR.
-          #if [[ github.event.number ]]; then
-          #  TAG="pr-${{ github.event.number }}-${{ matrix.fedora_version }}"
-          #fi
-
-          echo "tag=${TAG}" >> $GITHUB_OUTPUT
-
-      - name: Set Flatpaks Directory Shortname
-        id: generate-flatpak-dir-shortname
-        shell: bash
-        run: |
-          if [[ ${{ inputs.brand_name }} = "bluefin" ]]; then
-            FLATPAK_DIR_SHORTNAME="bluefin_flatpaks"
-          elif [[ ${{ inputs.brand_name }} = "aurora" ]]; then
-            FLATPAK_DIR_SHORTNAME="aurora_flatpaks"
-          fi
-          echo "flatpak-dir-shortname=${FLATPAK_DIR_SHORTNAME}" >> $GITHUB_OUTPUT
-
-      - name: Determine Flatpak Dependencies
-        id: flatpak_dependencies
-        shell: bash
-        run: |
-          set -ex
-          image="ghcr.io/ublue-os/${{ env.IMAGE_NAME }}:${{ inputs.fedora_version }}"
-          # Make temp space
-          TEMP_FLATPAK_INSTALL_DIR=$(mktemp -d -p ${{ github.workspace }} flatpak.XXX)
-          # Get list of refs from directory
-          FLATPAK_REFS_DIR=${{ github.workspace }}/${{ steps.generate-flatpak-dir-shortname.outputs.flatpak-dir-shortname }}
-          FLATPAK_REFS_DIR_LIST=$(cat ${FLATPAK_REFS_DIR}/* | tr '\n' ' ' )
-          # Generate install script
-          cat << EOF > ${TEMP_FLATPAK_INSTALL_DIR}/script.sh
-          cat /temp_flatpak_install_dir/script.sh
-          mkdir -p /flatpak/flatpak /flatpak/triggers
-          mkdir /var/tmp || true
-          chmod -R 1777 /var/tmp
-          flatpak config --system --set languages "*"
-          flatpak remote-add --system flathub https://flathub.org/repo/flathub.flatpakrepo
-          flatpak install --system -y ${FLATPAK_REFS_DIR_LIST}
-          ostree refs --repo=\${FLATPAK_SYSTEM_DIR}/repo | grep '^deploy/' | grep -v 'org\.freedesktop\.Platform\.openh264' | sed 's/^deploy\///g' > /output/flatpaks_with_deps
-          EOF
-          docker run --rm --privileged \
-            --entrypoint bash \
-            -e FLATPAK_SYSTEM_DIR=/flatpak/flatpak \
-            -e FLATPAK_TRIGGERSDIR=/flatpak/triggers \
-            --volume ${FLATPAK_REFS_DIR}:/output \
-            --volume ${TEMP_FLATPAK_INSTALL_DIR}:/temp_flatpak_install_dir \
-            ${image} /temp_flatpak_install_dir/script.sh
-          docker rmi ${image}
-
-      - name: Build ISOs
-        uses: jasonn3/build-container-installer@v1.2.2
-        id: build
-        with:
-          arch: x86_64
-          image_name: ${{ env.IMAGE_NAME }}
-          image_repo: ghcr.io/ublue-os
-          variant: ${{ env.VARIANT }}
-          version: ${{ steps.labels.outputs.fedora_version }}
-          image_tag: ${{ steps.generate-tag.outputs.tag }}
-          secure_boot_key_url: "https://github.com/ublue-os/akmods/raw/main/certs/public_key.der"
-          enrollment_password: "universalblue"
-          iso_name: ${{ env.IMAGE_NAME }}-${{ steps.generate-tag.outputs.tag }}.iso
-          enable_cache_dnf: "false"
-          enable_cache_skopeo: "false"
-          flatpak_remote_refs_dir: ${{ steps.generate-flatpak-dir-shortname.outputs.flatpak-dir-shortname }}
-          enable_flatpak_dependencies: "false"
+          image_name="$(just image_name ${{ matrix.base_name }} ${{ matrix.stream_name }} ${{ matrix.image_flavor }})"
+          just build-iso "${{ matrix.base_name }}" "${{ matrix.stream_name }}" "${{ matrix.image_flavor }}" "1" "1"
+          echo "IMAGE_NAME=${image_name}" >> $GITHUB_ENV
+          echo "ISO_BUILD_DIR=${{ github.workspace }}/${image_name}_build" >> $GITHUB_ENV
+          echo "ISO_NAME=${image_name}-${{ matrix.stream_name }}.iso" >> $GITHUB_ENV
 
       - name: Move ISOs to Upload Directory
         id: upload-directory
@@ -170,24 +70,39 @@ jobs:
         run: |
           ISO_UPLOAD_DIR=${{ github.workspace }}/upload
           mkdir ${ISO_UPLOAD_DIR}
-          mv ${{ steps.build.outputs.iso_path }}/${{ steps.build.outputs.iso_name }} ${ISO_UPLOAD_DIR}
-          mv ${{ steps.build.outputs.iso_path }}/${{ steps.build.outputs.iso_name }}-CHECKSUM ${ISO_UPLOAD_DIR}
+          mv ${{ env.ISO_BUILD_DIR }}/${{ env.ISO_NAME }} ${ISO_UPLOAD_DIR}
+          mv ${{ env.ISO_BUILD_DIR }}/${{ env.ISO_NAME }}-CHECKSUM ${ISO_UPLOAD_DIR}
           echo "iso-upload-dir=${ISO_UPLOAD_DIR}" >> $GITHUB_OUTPUT
 
       - name: Upload ISOs and Checksum to Job Artifacts
         if: github.ref_name == 'testing'
-        #if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
         with:
-          name: ${{ steps.build.outputs.iso_name }}
+          name: ${{ env.ISO_NAME }}
           path: ${{ steps.upload-directory.outputs.iso-upload-dir }}
           if-no-files-found: error
           retention-days: 0
           compression-level: 0
           overwrite: true
+        
+      - name: HWE ISO rename
+        if: contains(matrix.image_flavor, 'hwe')
+        shell: bash
+        run: |
+          set -eoux pipefail
+          iso_name="${{ env.ISO_NAME }}"
+          asus_name="${iso_name/hwe/asus}"
+          surface_name="${iso_name/hwe/surface}"
+          mv "${{ steps.upload-directory.outputs.iso-upload-dir }}/${iso_name}" "${{ steps.upload-directory.outputs.iso-upload-dir}}/${asus_name}"
+          mv "${{ steps.upload-directory.outputs.iso-upload-dir }}/${iso_name}-CHECKSUM" "${{ steps.upload-directory.outputs.iso-upload-dir}}/${asus_name}-CHECKSUM"
+          sed -i -e 's/-hwe/-asus/' "${{ steps.upload-directory.outputs.iso-upload-dir}}/${asus_name}-CHECKSUM"
+          cp "${{ steps.upload-directory.outputs.iso-upload-dir }}/${asus_name}" "${{ steps.upload-directory.outputs.iso-upload-dir}}/${surface_name}"
+          cp "${{ steps.upload-directory.outputs.iso-upload-dir }}/${asus_name}-CHECKSUM" "${{ steps.upload-directory.outputs.iso-upload-dir}}/${surface_name}-CHECKSUM"
+          sed -i -e 's/-asus/-surface/' "${{ steps.upload-directory.outputs.iso-upload-dir}}/${surface_name}-CHECKSUM"
+          tree "${{ steps.upload-directory.outputs.iso-upload-dir }}"
 
       - name: Upload ISOs and Checksum to R2 to Bluefin Bucket
-        if: github.ref_name == 'main' && inputs.brand_name == 'bluefin'
+        if: github.ref_name == 'main' && contains(matrix.base_name,'bluefin')
         shell: bash
         env:
           RCLONE_CONFIG_R2_TYPE: s3
@@ -203,7 +118,7 @@ jobs:
           rclone copy $SOURCE_DIR R2:bluefin
 
       - name: Upload ISOs and Checksum to R2 to Aurora Bucket
-        if: github.ref_name == 'main' && inputs.brand_name == 'aurora'
+        if: github.ref_name == 'main' && contains(matrix.base_name,'aurora')
         shell: bash
         env:
           RCLONE_CONFIG_R2_TYPE: s3
