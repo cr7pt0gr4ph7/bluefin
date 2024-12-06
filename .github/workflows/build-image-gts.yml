@@ -25,17 +25,17 @@ jobs:
       brand_name: ${{ matrix.brand_name }}
       stream_name: gts
 
-  generate_release:
-    name: Generate Release
-    needs: [build-image-gts]
-    secrets: inherit
-    uses: ./.github/workflows/generate-release.yml
-    with:
-      stream_name: '["gts"]'
+  # generate_release:
+  #   name: Generate Release
+  #   needs: [build-image-gts]
+  #   secrets: inherit
+  #   uses: ./.github/workflows/generate-release.yml
+  #   with:
+  #     stream_name: '["gts"]'
 
-  build-iso-gts:
-    name: Build GTS ISOs
-    needs: [build-image-gts]
-    if: github.event_name == 'schedule'
-    secrets: inherit
-    uses: ./.github/workflows/build-iso-gts.yml
+  # build-iso-gts:
+  #   name: Build GTS ISOs
+  #   needs: [build-image-gts]
+  #   if: github.event_name == 'schedule'
+  #   secrets: inherit
+  #   uses: ./.github/workflows/build-iso-gts.yml

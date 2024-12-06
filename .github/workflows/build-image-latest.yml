@@ -21,25 +21,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        brand_name: ["bluefin", "aurora"]
+        # brand_name: ["bluefin", "aurora"]
+        brand_name: ["bluefin"]
     with:
-      image_flavors: '["main", "nvidia", "hwe", "hwe-nvidia"]'
+      # image_flavors: '["main", "nvidia", "hwe", "hwe-nvidia"]'
+      image_flavors: '["main"]'
       brand_name: ${{ matrix.brand_name }}
       stream_name: latest
     # This needs splitting, right now a kernel pin will not work due to hwe kernel
 
-  generate-release:
-    name: Generate Release
-    needs: [build-image-latest]
-    secrets: inherit
-    uses: ./.github/workflows/generate-release.yml
-    with:
-      stream_name: '["latest"]'
+  # generate-release:
+  #   name: Generate Release
+  #   needs: [build-image-latest]
+  #   secrets: inherit
+  #   uses: ./.github/workflows/generate-release.yml
+  #   with:
+  #     stream_name: '["latest"]'
 
-  build-iso-latest:
-    name: Build Latest ISOs
-    needs: [build-image-latest]
-    if: github.event.schedule == '40 4 * * 0'
-    
-    secrets: inherit
-    uses: ./.github/workflows/build-iso-latest.yml
+  # build-iso-latest:
+  #   name: Build Latest ISOs
+  #   needs: [build-image-latest]
+  #   if: github.event.schedule == '40 4 * * 0'
+
+  #   secrets: inherit
+  #   uses: ./.github/workflows/build-iso-latest.yml
