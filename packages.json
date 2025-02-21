@@ -40,6 +40,7 @@
 				"printer-driver-brlaser",
 				"pulseaudio-utils",
 				"python3-pip",
+				"pipx",
 				"rclone",
 				"restic",
 				"samba-dcerpc",
