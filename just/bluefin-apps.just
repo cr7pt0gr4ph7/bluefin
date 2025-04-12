@@ -20,13 +20,24 @@ cockpit:
 setup-cockpit ACTION="":
     #!/usr/bin/env bash
     source /usr/lib/ujust/ujust.sh
+
+    MANAGED_COCKPIT_CONTAINER="cockpit-ws"
+
+    if sudo podman container exists $MANAGED_COCKPIT_CONTAINER ; then
+        COCKPIT_CONTAINER_STATUS_PRETTY="${green}${b}Installed${n}"
+        COCKPIT_CONTAINER_STATUS=1
+    else
+        COCKPIT_CONTAINER_STATUS_PRETTY="${invert}${b}Not installed${n}"
+        COCKPIT_CONTAINER_STATUS=0
+    fi
+
     COCKPIT_SERVICE_STATUS="$(systemctl is-enabled cockpit.service)"
     if [ "$COCKPIT_SERVICE_STATUS" == "enabled" ]; then
         COCKPIT_SERVICE_STATUS="${green}${b}Enabled${n}"
     elif [ "$COCKPIT_SERVICE_STATUS" == "disabled" ]; then
         COCKPIT_SERVICE_STATUS="${red}${b}Disabled${n}"
     else
-        COCKPIT_SERVICE_STATUS="${invert}${b}Not Installed${n}"
+        COCKPIT_SERVICE_STATUS="${invert}${b}Not installed${n}"
     fi
     OPTION={{ ACTION }}
     if [ "$OPTION" == "help" ]; then
@@ -36,43 +47,60 @@ setup-cockpit ACTION="":
       Use 'install' to select Install Cockpit
       Use 'enable' to select Enable Cockpit
       Use 'disable' to select Disable Cockpit
+      Use 'uninstall' to select Uninstall Cockpit
     EOF
         exit 0
     elif [ "$OPTION" == "" ]; then
         echo "${bold}Cockpit Setup${normal}"
         echo "Cockpit service is currently: $COCKPIT_SERVICE_STATUS"
-        if [[ "${COCKPIT_SERVICE_STATUS}" =~ "Not Installed" ]]; then
+        echo "The Cockpit container is currently: $COCKPIT_CONTAINER_STATUS_PRETTY"
+        if [[ "${COCKPIT_CONTAINER_STATUS}" -eq 0 ]]; then
+            echo "Warning: This will enable ssh password login because Cockpit requires it."
             OPTION=$(Choose "Install Cockpit" "Cancel")
         else
-            OPTION=$(Choose "Enable Cockpit" "Disable Cockpit")
+            OPTION=$(Choose "Enable Cockpit" "Disable Cockpit" "Uninstall Cockpit")
         fi
     fi
     if [[ "${OPTION,,}" =~ ^install ]]; then
-        echo 'Installing Cockpit'
-        pkexec /bin/bash <<EOF
-    echo 'PasswordAuthentication yes' | tee /etc/ssh/sshd_config.d/02-enable-passwords.conf
-    systemctl try-restart sshd
-    systemctl enable --now sshd
-    podman container runlabel --name cockpit-ws RUN quay.io/cockpit/ws
-    podman runlabel INSTAL quay.io/cockpit/ws"    
+        echo "${blue}${b}Installing Cockpit${n}"
+        sudo /bin/bash <<EOF
+    [ ! -f /etc/ssh/sshd_config.d/02-enable-passwords.conf ] && echo -e "# File managed by ujust cockpit\nPasswordAuthentication yes" > /etc/ssh/sshd_config.d/02-enable-passwords.conf
+    systemctl -q try-restart sshd
+    systemctl -q enable --now sshd
+    if ! podman image exists quay.io/cockpit/ws ; then
+        podman pull quay.io/cockpit/ws:latest
+    fi
+    podman container runlabel -q --name $MANAGED_COCKPIT_CONTAINER RUN quay.io/cockpit/ws
+    podman container runlabel -q INSTALL quay.io/cockpit/ws systemctl enable cockpit.service
     EOF
         OPTION="Enable Cockpit"
     fi
     if [[ "${OPTION,,}" =~ ^enable ]]; then
-        pkexec /bin/bash <<EOF
-    echo "${green}${b}Enabling${n} pmlogger"
-    mkdir -p /var/lib/pcp/tmp /var/log/pcp/pmlogger
-    chown -R pcp:pcp /var/lib/pcp
-    chown pcp:pcp /var/log/pcp/pmlogger
-    systemctl enable --now pmlogger
+        sudo /bin/bash <<EOF
     echo "${green}${b}Enabling${n} Cockpit"
-    systemctl enable cockpit.service
+    systemctl -q enable --now cockpit.service
+    podman start $MANAGED_COCKPIT_CONTAINER
     echo "$(Urllink "http://localhost:9090" "Open Cockpit${n}") -> http://localhost:9090"
     EOF
     fi
     if [[ "${OPTION,,}" =~ ^disable ]]; then
         echo "${red}${b}Disabling${n} Cockpit"
-        pkexec systemctl disable cockpit.service && echo "Cockpit has been ${b}${red}disabled${n}"
+        sudo /bin/bash <<EOF
+    systemctl -q disable cockpit.service
+    podman stop $MANAGED_COCKPIT_CONTAINER
+    EOF
+        echo "Cockpit has been ${b}${red}disabled${n}"
+    fi
+    if [[ "${OPTION,,}" =~ ^uninstall ]] ; then
+        sudo /bin/bash <<EOF
+    [ -f /etc/ssh/sshd_config.d/02-enable-passwords.conf ] && rm -f /etc/ssh/sshd_config.d/02-enable-passwords.conf
+    systemctl -q try-restart sshd
+    systemctl -q disable --now cockpit.service
+    rm -f /etc/systemd/system/cockpit.service
+    podman stop -i $MANAGED_COCKPIT_CONTAINER
+    podman rm -f $MANAGED_COCKPIT_CONTAINER
+    EOF
+        echo "Cockpit has been ${red}${b}uninstalled${n}"
     fi
 
 # alias for install-jetbrains-toolbox
@@ -103,6 +131,38 @@ install-jetbrains-toolbox:
 [group('Apps')]
 incus:
     @ujust install-incus
+
+# Install OpenTabletDriver, an open source, cross-platform, user-mode tablet driver
+[group('Apps')]
+install-opentabletdriver:
+    #!/usr/bin/bash
+    source /usr/lib/ujust/ujust.sh
+    echo "Installer for OpenTabletDriver..."
+    echo "${bold}Install or Remove OpenTabletDriver${normal}"
+    OPTION=$(Choose "Install" "Uninstall" "Exit")
+    if [[ "${OPTION,,}" =~ ^install ]]; then
+        echo "Installing OpenTabletDriver..."
+        curl -s https://api.github.com/repos/OpenTabletDriver/OpenTabletDriver/releases/latest \
+        | jq -r '.assets | sort_by(.created_at) | .[] | select (.name|test("opentabletdriver.*tar.gz$")) | .browser_download_url' \
+        | wget -qi - -O /tmp/OpenTabletDriver/opentabletdriver.tar.gz && \
+        tar --strip-components=1 -xvzf /tmp/OpenTabletDriver/opentabletdriver.tar.gz -C /tmp/OpenTabletDriver && \
+        pkexec cp /tmp/OpenTabletDriver/etc/udev/rules.d/70-opentabletdriver.rules /etc/udev/rules.d/71-opentabletdriver.rules && \
+        rm -rf /tmp/OpenTabletDriver && \
+        flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo && \
+        flatpak --system install -y flathub net.opentabletdriver.OpenTabletDriver && \
+        mkdir -p $HOME/.config/OpenTabletDriver && \
+        flatpak override --user --filesystem=xdg-config/OpenTabletDriver net.opentabletdriver.OpenTabletDriver && \
+        mkdir -p $HOME/.config/systemd/user && \
+        curl -s https://raw.githubusercontent.com/flathub/net.opentabletdriver.OpenTabletDriver/refs/heads/master/scripts/opentabletdriver.service > $HOME/.config/systemd/user/opentabletdriver.service  && \
+        systemctl --user daemon-reload && \
+        systemctl enable --user --now opentabletdriver.service
+    elif [[ "${OPTION,,}" =~ ^uninstall ]]; then
+        echo "Uninstalling OpenTabletDriver..."
+        pkexec rm /etc/udev/rules.d/71-opentabletdriver.rules && \
+        flatpak --system remove -y flathub net.opentabletdriver.OpenTabletDriver
+    else
+        echo "Have a good day :)!"
+    fi
 
 # Install and configure Incus
 [group('Apps')]
@@ -175,3 +235,21 @@ setup-brew-not-found ACTION="":
         pkexec rm -f "${FILES_TO_BE_REMOVED[@]}"
       echo "Brew command-not-found has been ${b}${red}disabled${n}"
     fi
+
+# Install gaming flatpaks
+# 23.08 runtime versions are needed for Heroic/Lutris
+[group('Apps')]
+install-gaming-flatpaks:
+    #!/usr/bin/env bash
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    flatpak --system -y install --or-update app/com.valvesoftware.Steam/x86_64/stable \
+                                            app/com.heroicgameslauncher.hgl/x86_64/stable \
+                                            app/net.lutris.Lutris/x86_64/stable \
+                                            app/net.davidotek.pupgui2/x86_64/stable \
+                                            app/com.dec05eba.gpu_screen_recorder/x86_64/stable \
+                                            runtime/org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08 \
+                                            runtime/org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08 \
+                                            runtime/org.freedesktop.Platform.VulkanLayer.OBSVkCapture/x86_64/24.08 \
+                                            runtime/com.obsproject.Studio.Plugin.OBSVkCapture/x86_64/stable \
+                                            runtime/org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08 \
+                                            runtime/org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08

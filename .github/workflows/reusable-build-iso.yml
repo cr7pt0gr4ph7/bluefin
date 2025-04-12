@@ -4,11 +4,12 @@ on:
     inputs:
       image_flavors:
         description: "JSON string of flavors to build, '[main, nvidia, hwe, hwe-nvidia]'"
-        default: "['main', 'nvidia']"
+        default: "['main', 'nvidia', 'nvidia-open']"
         type: string
       brand_name:
-        description: "The Brand Name: bluefin or aurora"
+        description: "The Brand Name: bluefin"
         required: true
+        default: bluefin
         type: string
       stream_name:
         description: "The Fedora Version: gts, stable, or latest"
@@ -21,7 +22,7 @@ concurrency:
 
 jobs:
   build-iso:
-    runs-on: ubuntu-24.04
+    runs-on: blacksmith-4vcpu-ubuntu-2204
     permissions:
       contents: read
       packages: write
@@ -39,13 +40,7 @@ jobs:
 
       - name: Install Just
         shell: bash
-        run: |
-          set -eoux pipefail
-          JUST_VERSION=$(curl -L https://api.github.com/repos/casey/just/releases/latest | jq -r '.tag_name')
-          curl -sSLO https://github.com/casey/just/releases/download/${JUST_VERSION}/just-${JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz
-          tar -zxvf just-${JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz -C /tmp just
-          sudo mv /tmp/just /usr/local/bin/just
-          rm -f just-${JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz
+        run: bash .github/workflows/shared/install-just.sh
 
       - name: Check Just Syntax
         shell: bash
@@ -76,7 +71,7 @@ jobs:
 
       - name: Upload ISOs and Checksum to Job Artifacts
         if: github.ref_name == 'testing'
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ${{ env.ISO_NAME }}
           path: ${{ steps.upload-directory.outputs.iso-upload-dir }}
@@ -84,7 +79,7 @@ jobs:
           retention-days: 0
           compression-level: 0
           overwrite: true
-        
+
       - name: HWE ISO rename
         if: contains(matrix.image_flavor, 'hwe')
         shell: bash
@@ -116,19 +111,3 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rclone
           rclone copy $SOURCE_DIR R2:bluefin
-
-      - name: Upload ISOs and Checksum to R2 to Aurora Bucket
-        if: github.ref_name == 'main' && contains(matrix.base_name,'aurora')
-        shell: bash
-        env:
-          RCLONE_CONFIG_R2_TYPE: s3
-          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
-          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.AURORA_R2_ACCESS_KEY_ID }}
-          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.AURORA_R2_SECRET_ACCESS_KEY }}
-          RCLONE_CONFIG_R2_REGION: auto
-          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.AURORA_R2_ENDPOINT }}
-          SOURCE_DIR: ${{ steps.upload-directory.outputs.iso-upload-dir }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rclone
-          rclone copy $SOURCE_DIR R2:aurora-dl

@@ -13,13 +13,16 @@
 # Run a one minute system benchmark
 [group('System')]
 benchmark:
-    @echo 'Running a 1 minute benchmark ...'
+    #!/usr/bin/env bash
+    echo 'Running a 1 minute benchmark ...'
+    trap popd EXIT
+    pushd $(mktemp -d)
     stress-ng --matrix 0 -t 1m --times
 
 # Configure Bluefin-CLI Terminal Experience with Brew
 [group('System')]
 bluefin-cli:
-    @/usr/libexec/ublue-bling.sh
+    @/usr/libexec/ublue-bling
 
 # alias for toggle-devmode
 devmode:
@@ -32,11 +35,11 @@ toggle-devmode:
     source /usr/lib/ujust/ujust.sh
     CURRENT_IMAGE=$(rpm-ostree status -b --json | jq -r '.deployments[0]."container-image-reference"')
     if grep -q "/var/ublue-os/image" <<< $CURRENT_IMAGE ; then
-        cat <<EOF
+        bash -c "cat <<EOF
     Before we can switch to the Bluefin Developer Experience
     the current system needs an update. Please run 'ujust update'
     and reboot your system when the update is finished
-    EOF
+    EOF"
         exit
     fi
     if /bin/grep -q "\-dx" <<< $CURRENT_IMAGE ; then
@@ -53,11 +56,7 @@ toggle-devmode:
             exit 0
         fi
         echo "Rebasing to a developer image"
-        if [[ "${CURRENT_IMAGE}" =~ "bluefin" ]]; then
-            NEW_IMAGE=$(sed "s/bluefin/bluefin-dx/" <<< $CURRENT_IMAGE)
-        elif [[ "${CURRENT_IMAGE}" =~ "aurora" ]]; then
-            NEW_IMAGE=$(sed "s/aurora/aurora-dx/" <<< $CURRENT_IMAGE)
-        fi
+        NEW_IMAGE=$(sed "s/bluefin/bluefin-dx/" <<< $CURRENT_IMAGE)
         rpm-ostree rebase $NEW_IMAGE
         echo -e "\nUse `ujust dx-group` to add your user to the correct groups and complete the installation"
     fi
@@ -133,22 +132,22 @@ configure-vfio ACTION="":
     fi
     OPTION={{ ACTION }}
     if [ "$OPTION" == "help" ]; then
-        cat <<EOF
+        bash -c "cat <<EOF
     Usage: ujust configure-vfio <option>
       <option>: Specify the quick option to skip the prompt
       Use 'vfio-on' to select Enable VFIO drivers
       Use 'vfio-off' to select Disable VFIO drivers
-      Use 'kvmfr' to select Autocreate Looking-Glass shm
-    EOF
+      Use 'kvmfr' to enable kvmfr module for looking-glass
+    EOF"
         exit 0
     elif [ "$OPTION" == "" ]; then
-        cat <<EOF
+        bash -c "cat <<EOF
     ${bold}VFIO and kvmfr Configuration${normal}
     This is only used for GPU passthrough of a secondary dGPU.
-    It will enable vfio and configure kvmfr for use with $(Urllink "https://looking-glass.io" "Looking Glass")
+    It will enable vfio and configure kvmfr for use with $(Urllink "https://looking-glass.io" "Looking Glass").
     If you do not plan to use any of this then press ESC.
-    EOF
     ${bold}NOTE:${normal} Since this is a niche use case, support will be ${b}very limited${n}
+    EOF"
         OPTION=$(Choose \
           "Enable VFIO drivers" \
           "Disable VFIO drivers" \
@@ -157,32 +156,41 @@ configure-vfio ACTION="":
     fi
     if [[ "${OPTION,,}" =~ (^enable[[:space:]]vfio|vfio-on) ]]; then
         echo "Enabling VFIO..."
-        VIRT_TEST=$(rpm-ostree kargs)
         CPU_VENDOR=$(grep "vendor_id" "/proc/cpuinfo" | uniq | awk -F": " '{ print $2 }')
         VENDOR_KARG="unset"
-        if [[ ${VIRT_TEST} == *kvm.report_ignored_msrs* ]]; then
-            echo 'add_drivers+=" vfio vfio_iommu_type1 vfio-pci "' | sudo tee /etc/dracut.conf.d/vfio.conf
-            rpm-ostree initramfs --enable
-            if [[ ${CPU_VENDOR} == "AuthenticAMD" ]]; then
-                VENDOR_KARG="amd_iommu=on"
-            elif [[ ${CPU_VENDOR} == "GenuineIntel" ]]; then
-                VENDOR_KARG="intel_iommu=on"
+        if [[ ${CPU_VENDOR} == "AuthenticAMD" ]]; then
+            VENDOR_KARG="amd_iommu=on"
+        elif [[ ${CPU_VENDOR} == "GenuineIntel" ]]; then
+            VENDOR_KARG="intel_iommu=on"
+        fi
+        if [[ ${VENDOR_KARG} == "unset" ]]; then
+            echo "Failed to get CPU vendor, exiting..."
+            exit 1
+        else
+            rpm-ostree kargs \
+                --append-if-missing="${VENDOR_KARG}" \
+                --append-if-missing="iommu=pt" \
+                --append-if-missing="rd.driver.pre=vfio_pci" \
+                --append-if-missing="vfio_pci.disable_vga=1" \
+                --append-if-missing="kvm.ignore_msrs=1" \
+                --append-if-missing="kvm.report_ignored_msrs=0"
+            if sudo test ! -f "/etc/libvirt/hooks/qemu"; then
+                echo "Adding libvirt qemu hooks"
+                sudo wget 'https://raw.githubusercontent.com/PassthroughPOST/VFIO-Tools/master/libvirt_hooks/qemu' -O /etc/libvirt/hooks/qemu
+                sudo chmod +x /etc/libvirt/hooks/qemu
+                sudo grep -A1 -B1 "# Add" /etc/libvirt/hooks/qemu | sed 's/^# //g'
+                echo ""
+                if sudo test ! -d "/etc/libvirt/hooks/qemu.d"; then
+                    sudo mkdir /etc/libvirt/hooks/qemu.d
+                fi
             fi
-            if [[ ${VENDOR_KARG} == "unset" ]]; then
-                echo "Failed to get CPU vendor, exiting..."
-                exit 1
-            else
-                rpm-ostree kargs \
-                  --append-if-missing="${VENDOR_KARG}" \
-                  --append-if-missing="iommu=pt" \
-                  --append-if-missing="rd.driver.pre=vfio_pci" \
-                  --append-if-missing="vfio_pci.disable_vga=1"
-                echo "VFIO will be enabled on next boot, make sure you enable IOMMU, VT-d or AMD-v in your BIOS!"
-                echo "Please understand that since this is such a niche use case, support will be very limited!"
-                echo "To add your unused/second GPU device ids to the vfio driver by running"
-                echo 'rpm-ostree kargs --append-if-missing="vfio-pci.ids=xxxx:yyyy,xxxx:yyzz"'
-                echo "NOTE: Your second GPU will not be usable by the host after you do this!"
-            fi
+            echo "VFIO will be enabled on next boot, make sure you enable IOMMU, VT-d or AMD-v in your BIOS!"
+            echo "Please understand that since this is such a niche use case, support will be very limited!"
+            echo "To add your unused/second GPU device ids to the vfio driver by running"
+            echo 'rpm-ostree kargs --append-if-missing="vfio-pci.ids=xxxx:yyyy,xxxx:yyzz"'
+            echo 'you can find these using "ls-iommu -gr" or "ls-iommu -grr"'
+            echo 'for a dedicated gpu there will be at least 1 vga device and 1 audio device.'
+            echo "NOTE: The GPU you bound to vfio-pci will not be usable by the host after you do this!"
         fi
     elif [[ "${OPTION,,}" =~ (^disable[[:space:]]vfio|vfio-off) ]]; then
         echo ""
@@ -193,13 +201,10 @@ configure-vfio ACTION="":
             VFIO_IDS="$(rpm-ostree kargs | sed -E 's/.+(vfio_pci.ids=.+\s)/\1/' | awk '{ print $1 }' | grep vfio_pci.ids)"
             VFIO_IDS_KARG=""
             if [ -n "$VFIO_IDS" ]; then
-              echo "Found VFIO ids in kargs, adding the below line to removal list"
-              echo "$VFIO_IDS"
-              VFIO_IDS_KARG="--delete-if-present=\"$VFIO_IDS\""
+                echo "Found VFIO ids in kargs, adding the below line to removal list"
+                echo "$VFIO_IDS"
+                VFIO_IDS_KARG="--delete-if-present=\"$VFIO_IDS\""
             fi
-            echo "Removing dracut modules"
-            sudo rm /etc/dracut.conf.d/vfio.conf
-            rpm-ostree initramfs --enable
             rpm-ostree kargs \
                 --delete-if-present="iommu=pt" \
                 --delete-if-present="iommu=on" \
@@ -232,16 +237,9 @@ configure-rt-audio ACTION="":
 
 # Install system flatpaks for rebasers
 [group('System')]
-[private]
 install-system-flatpaks:
     #!/usr/bin/bash
-    IMAGE_INFO="/usr/share/ublue-os/image-info.json"
-    BASE_IMAGE_NAME=$(jq -r '."base-image-name"' < $IMAGE_INFO)
-    if [[ ${BASE_IMAGE_NAME} == 'silverblue' ]]; then
-        FLATPAKS="bluefin_flatpaks/flatpaks"
-    elif [[ ${BASE_IMAGE_NAME} == 'kinoite' ]]; then
-        FLATPAKS="aurora_flatpaks/flatpaks"
-    fi
+    FLATPAKS="bluefin_flatpaks/flatpaks"
     FLATPAK_LIST="$(curl https://raw.githubusercontent.com/ublue-os/bluefin/main/${FLATPAKS} | tr '\n' ' ')"
     flatpak --system -y install --or-update ${FLATPAK_LIST}
 
