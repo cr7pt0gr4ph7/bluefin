@@ -60,9 +60,6 @@ HARDCODED_RPM_MONTH="12"
 # fi
 glib-compile-schemas /usr/share/glib-2.0/schemas
 
-# Install ublue-update -- breaks with packages.json due to missing topgrade
-dnf5 -y install ublue-update
-
 # Required for bluefin faces to work without conflicting with a ton of packages
 rm -f /usr/share/pixmaps/faces/* || echo "Expected directory deletion to fail"
 mv /usr/share/pixmaps/faces/bluefin/* /usr/share/pixmaps/faces
@@ -73,6 +70,10 @@ dnf5 -y swap fedora-logos bluefin-logos
 # Consolidate Just Files
 
 find /tmp/just -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; >>/usr/share/ublue-os/just/60-custom.just
+
+# Install ublue-update
+skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/ublue-update:latest /rpms/ublue-update.noarch.rpm /tmp/rpms/
+pip install topgrade && rpm-ostree override remove ublue-os-update-services && rpm-ostree install /tmp/rpms/ublue-update.noarch.rpm
 
 # Move over ublue-update config
 mv -f /tmp/ublue-update.toml /usr/etc/ublue-update/ublue-update.toml
