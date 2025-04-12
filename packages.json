@@ -225,10 +225,7 @@
 	},
 	"42": {
 		"include": {
-			"all": [
-        "google-noto-fonts-all",
-        "uupd"
-      ],
+			"all": ["google-noto-fonts-all"],
 			"dx": []
 		},
 		"exclude": {
