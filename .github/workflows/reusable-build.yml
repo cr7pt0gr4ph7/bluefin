@@ -210,7 +210,7 @@ jobs:
         env:
           TAGS: ${{ steps.push.outputs.outputs && fromJSON(steps.push.outputs.outputs).digest }}
           COSIGN_EXPERIMENTAL: false
-          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
 
       - name: Sign container image
         if: github.event_name != 'pull_request' && contains(matrix.image_flavor, 'hwe')
@@ -224,7 +224,7 @@ jobs:
         env:
           TAGS: ${{ steps.push.outputs.outputs && fromJSON(steps.push.outputs.outputs).digest }}
           COSIGN_EXPERIMENTAL: false
-          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
 
       - name: Add SBOM Attestation
         if: false
