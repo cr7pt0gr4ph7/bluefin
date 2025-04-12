@@ -16,6 +16,7 @@ echo "::group:: Copy Files"
 # Copy Files to Container
 cp -r /ctx/just /tmp/just
 cp /ctx/packages.json /tmp/packages.json
+cp /ctx/system_files/shared/etc/ublue-update/ublue-update.toml /tmp/ublue-update.toml
 rsync -rvK /ctx/system_files/shared/ /
 rsync -rvK /ctx/system_files/"${BASE_IMAGE_NAME}"/ /
 echo "::endgroup::"

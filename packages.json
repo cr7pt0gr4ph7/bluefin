@@ -172,6 +172,7 @@
 			"all": [
 				"firefox-langpacks",
 				"firefox",
+				"ublue-os-update-services",
 				"gnome-extensions-app",
 				"gnome-shell-extension-background-logo",
 				"gnome-software-rpm-ostree",
