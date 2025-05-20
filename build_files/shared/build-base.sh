@@ -13,12 +13,14 @@ echo "::endgroup::"
 
 echo "::group:: Copy Files"
 
+# Copy ISO list for `install-system-flaptaks`
+install -Dm0644 -t /etc/ublue-os/ /ctx/iso_files/*.list
+
 # Copy Files to Container
 cp -r /ctx/just /tmp/just
 cp /ctx/packages.json /tmp/packages.json
 cp /ctx/system_files/shared/etc/ublue-update/ublue-update.toml /tmp/ublue-update.toml
 rsync -rvK /ctx/system_files/shared/ /
-rsync -rvK /ctx/system_files/"${BASE_IMAGE_NAME}"/ /
 echo "::endgroup::"
 
 # Generate image-info.json
@@ -45,13 +47,7 @@ echo "::endgroup::"
 # Make HWE changes
 /ctx/build_files/base/09-hwe-additions.sh
 
-# Install Brew
-/ctx/build_files/base/10-brew.sh
-
 ## late stage changes
-
-# Make sure Bootc works
-/ctx/build_files/base/16-bootc.sh
 
 # Systemd and Remove Items
 /ctx/build_files/base/17-cleanup.sh

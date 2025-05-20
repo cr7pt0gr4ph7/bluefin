@@ -7,6 +7,7 @@
 				"adw-gtk3-theme",
 				"bash-color-prompt",
 				"bcache-tools",
+				"bluefin-backgrounds",
 				"bluefin-cli-logos",
 				"bluefin-faces",
 				"bluefin-fastfetch",
@@ -32,11 +33,11 @@
 				"gnome-shell-extension-logo-menu",
 				"gnome-shell-extension-search-light",
 				"gnome-shell-extension-tailscale-gnome-qs",
+				"gnome-tweaks",
 				"gum",
 				"hplip",
 				"ibus-mozc",
 				"ifuse",
-				"input-leap",
 				"input-remapper",
 				"jetbrains-mono-fonts-all",
 				"krb5-workstation",
@@ -69,19 +70,17 @@
 				"samba-winbind-clients",
 				"samba-winbind-modules",
 				"setools-console",
-				"simple-scan",
-				"solaar",
 				"sssd-ad",
 				"sssd-krb5",
 				"sssd-nfs-idmap",
-				"stress-ng",
 				"tailscale",
 				"tmux",
-				"topgrade",
 				"ublue-bling",
 				"ublue-brew",
 				"ublue-fastfetch",
 				"ublue-motd",
+				"ublue-polkit-rules",
+				"ublue-setup-services",
 				"uld",
 				"usbmuxd",
 				"wireguard-tools",
@@ -108,8 +107,12 @@
 				"cockpit-storaged",
 				"cockpit-system",
 				"code",
+				"containerd.io",
 				"dbus-x11",
-				"devpod",
+				"docker-buildx-plugin",
+				"docker-ce",
+				"docker-ce-cli",
+				"docker-compose-plugin",
 				"edk2-ovmf",
 				"flatpak-builder",
 				"git-gui",
@@ -133,8 +136,8 @@
 				"nicstat",
 				"numactl",
 				"osbuild-selinux",
-				"p7zip-plugins",
 				"p7zip",
+				"p7zip-plugins",
 				"podman-bootc",
 				"podman-compose",
 				"podman-machine",
@@ -143,7 +146,7 @@
 				"powerline-fonts",
 				"powertop",
 				"python3-ramalama",
-				"snapper",
+				"qemu",
 				"qemu-char-spice",
 				"qemu-device-display-virtio-gpu",
 				"qemu-device-display-virtio-vga",
@@ -152,10 +155,10 @@
 				"qemu-system-x86-core",
 				"qemu-user-binfmt",
 				"qemu-user-static",
-				"qemu",
 				"rocm-hip",
 				"rocm-opencl",
 				"rocm-smi",
+				"snapper",
 				"sysprof",
 				"tiptop",
 				"trace-cmd",
@@ -163,44 +166,26 @@
 				"udica",
 				"umoci",
 				"virt-manager",
-				"virt-viewer",
 				"virt-v2v",
+				"virt-viewer",
 				"ydotool"
 			]
 		},
 		"exclude": {
 			"all": [
-				"firefox-langpacks",
+				"fedora-bookmarks",
+				"fedora-chromium-config",
+				"fedora-chromium-config-gnome",
 				"firefox",
+				"firefox-langpacks",
 				"ublue-os-update-services",
 				"gnome-extensions-app",
 				"gnome-shell-extension-background-logo",
 				"gnome-software-rpm-ostree",
 				"gnome-terminal-nautilus",
-				"podman-docker"
+				"podman-docker",
+				"yelp"
 			],
-			"dx": []
-		}
-	},
-	"40": {
-		"include": {
-			"all": [
-				"epson-inkjet-printer-escpr",
-				"epson-inkjet-printer-escpr2",
-				"ptyxis"
-			],
-			"dx": [
-				"containerd.io",
-				"docker-buildx-plugin",
-				"docker-ce",
-				"docker-ce-cli",
-				"docker-compose-plugin",
-				"lxd-agent",
-				"lxd"
-			]
-		},
-		"exclude": {
-			"all": [],
 			"dx": []
 		}
 	},
@@ -211,13 +196,7 @@
 				"epson-inkjet-printer-escpr2",
 				"google-noto-fonts-all"
 			],
-			"dx": [
-				"containerd.io",
-				"docker-buildx-plugin",
-				"docker-ce",
-				"docker-ce-cli",
-				"docker-compose-plugin"
-			]
+			"dx": []
 		},
 		"exclude": {
 			"all": [],
@@ -226,7 +205,10 @@
 	},
 	"42": {
 		"include": {
-			"all": ["google-noto-fonts-all"],
+			"all": [
+				"bazaar",
+				"google-noto-fonts-all"
+			],
 			"dx": []
 		},
 		"exclude": {

@@ -1,11 +1,12 @@
 ARG BASE_IMAGE_NAME="silverblue"
-ARG FEDORA_MAJOR_VERSION="40"
+ARG FEDORA_MAJOR_VERSION="41"
 ARG SOURCE_IMAGE="${BASE_IMAGE_NAME}-main"
 ARG BASE_IMAGE="ghcr.io/ublue-os/${SOURCE_IMAGE}"
 
 FROM scratch AS ctx
 COPY /system_files /system_files
 COPY /build_files /build_files
+COPY /iso_files /iso_files
 COPY /just /just
 COPY packages.json /
 
@@ -33,7 +34,7 @@ FROM base AS dx
 
 ARG AKMODS_FLAVOR="coreos-stable"
 ARG BASE_IMAGE_NAME="silverblue"
-ARG FEDORA_MAJOR_VERSION="40"
+ARG FEDORA_MAJOR_VERSION="41"
 ARG IMAGE_NAME="bluefin-dx"
 ARG IMAGE_VENDOR="ublue-os"
 ARG KERNEL="6.10.10-200.fc40.x86_64"
