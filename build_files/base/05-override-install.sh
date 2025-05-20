@@ -50,7 +50,7 @@ dnf -y install bluefin-plymouth
 find /tmp/just -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; >>/usr/share/ublue-os/just/60-custom.just
 
 # Install ublue-update
-skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/ublue-update:latest dir:/tmp/ublue-update
+skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/ublue-update:latest dir:/tmp/ublue-update --insecure-policy
 UBLUE_UPDATE_TARGZ=$(jq -r '.layers[].digest' </tmp/ublue-update/manifest.json | cut -d : -f 2)
 tar -xvzf /tmp/ublue-update/"$UBLUE_UPDATE_TARGZ" -C /tmp/
 mv /tmp/rpms/* /tmp/ublue-update-rpms/
