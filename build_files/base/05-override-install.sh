@@ -50,7 +50,7 @@ dnf -y install bluefin-plymouth
 find /tmp/just -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; >>/usr/share/ublue-os/just/60-custom.just
 
 # Install ublue-update
-skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/ublue-update:latest /rpms/ublue-update.noarch.rpm /tmp/rpms/
+skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/ublue-update:latest dir:/rpms/ublue-update.noarch.rpm /tmp/rpms/
 pip install topgrade && rpm-ostree override remove ublue-os-update-services && rpm-ostree install /tmp/rpms/ublue-update.noarch.rpm
 
 # Move over ublue-update config
