@@ -36,6 +36,7 @@ FEDORA_PACKAGES=(
     foo2zjs
     fuse-encfs
     gcc
+    git-lfs
     git-credential-libsecret
     glow
     gnome-tweaks
