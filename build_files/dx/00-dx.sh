@@ -41,6 +41,7 @@ FEDORA_PACKAGES=(
     nicstat
     numactl
     osbuild-selinux
+    perf
     p7zip
     p7zip-plugins
     podman-compose
@@ -62,6 +63,7 @@ FEDORA_PACKAGES=(
     incus
     incus-agent
     lxc
+    sunxi-tools
     tiptop
     trace-cmd
     udica
