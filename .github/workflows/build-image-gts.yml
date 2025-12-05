@@ -6,12 +6,12 @@ on:
       - testing
     paths-ignore:
       - "**.md"
+      - ".github/workflows/*iso*.yml"
+      - ".github/workflows/*validate*.yml"
       - "iso_files/**"
-      - "bluefin_flatpaks/**"
-      - "dx_flatpaks/**"
-      - ".github/workflows/*iso*"
+      - "system_files/shared/etc/bazaar/**"
   schedule:
-    - cron: "50 5 * * 0" # 5:50 UTC Weekly on Sundays
+    - cron: "0 1 * * TUE" # Every Tuesday at 1:00 AM UTC (same as bluefin-lts)
   workflow_dispatch:
   workflow_call:
 
@@ -25,7 +25,7 @@ jobs:
       matrix:
         brand_name: [bluefin]
     with:
-      #     kernel_pin: 6.13.8-200.fc41.x86_64     ## This is where kernels get pinned.
+      # kernel_pin: 6.14.11-200.fc41.x86_64    ## This is where kernels get pinned.
       brand_name: ${{ matrix.brand_name }}
       stream_name: gts
 

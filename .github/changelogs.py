@@ -11,12 +11,12 @@ REGISTRY = "docker://ghcr.io/ublue-os/"
 IMAGE_MATRIX_LATEST = {
     "experience": ["base", "dx"],
     "de": ["gnome"],
-    "image_flavor": ["main", "nvidia", "hwe", "hwe-nvidia"],
+    "image_flavor": ["main", "nvidia-open"],
 }
 IMAGE_MATRIX = {
     "experience": ["base", "dx"],
     "de": ["gnome"],
-    "image_flavor": ["main", "nvidia"],
+    "image_flavor": ["main", "nvidia-open"],
 }
 
 RETRIES = 3
@@ -34,12 +34,11 @@ OTHER_NAMES = {
     "base": "### Base Images\n| | Name | Previous | New |\n| --- | --- | --- | --- |{changes}\n\n",
     "dx": "### [Dev Experience Images](https://docs.projectbluefin.io/bluefin-dx)\n| | Name | Previous | New |\n| --- | --- | --- | --- |{changes}\n\n",
     "gnome": "### [Bluefin Images](https://projectbluefin.io/)\n| | Name | Previous | New |\n| --- | --- | --- | --- |{changes}\n\n",
-    "nvidia": "### Nvidia Images\n| | Name | Previous | New |\n| --- | --- | --- | --- |{changes}\n\n",
-    "hwe": "### HWE Images\n| | Name | Previous | New |\n| --- | --- | --- | --- |{changes}\n\n",
+    "nvidia-open": "### Nvidia Images\n| | Name | Previous | New |\n| --- | --- | --- | --- |{changes}\n\n",
 }
 
-COMMITS_FORMAT = "### Commits\n| Hash | Subject |\n| --- | --- |{commits}\n\n"
-COMMIT_FORMAT = "\n| **[{short}](https://github.com/ublue-os/bluefin/commit/{githash})** | {subject} |"
+COMMITS_FORMAT = "### Commits\n| Hash | Subject | Author |\n| --- | --- | --- |{commits}\n\n"
+COMMIT_FORMAT = "\n| **[{short}](https://github.com/ublue-os/bluefin/commit/{githash})** | {subject} | {author} |"
 
 CHANGELOG_TITLE = "{tag}: {pretty}"
 CHANGELOG_FORMAT = """\
@@ -51,7 +50,7 @@ From previous `{target}` version `{prev}` there have been the following changes.
 | Name | Version |
 | --- | --- |
 | **Kernel** | {pkgrel:kernel} |
-| **Gnome** | {pkgrel:gnome-control-center-filesystem} |
+| **Gnome** | {pkgrel:gnome-shell} |
 | **Mesa** | {pkgrel:mesa-filesystem} |
 | **Podman** | {pkgrel:podman} |
 | **Nvidia** | {pkgrel:nvidia-driver} |
@@ -61,7 +60,6 @@ From previous `{target}` version `{prev}` there have been the following changes.
 | --- | --- |
 | **Incus** | {pkgrel:incus} |
 | **Docker** | {pkgrel:docker-ce} |
-| **Devpod** | {pkgrel:devpod} |
 
 {changes}
 
@@ -87,7 +85,7 @@ This is an automatically generated changelog for release `{curr}`."""
 
 BLACKLIST_VERSIONS = [
     "kernel",
-    "gnome-control-center-filesystem",
+    "gnome-shell",
     "mesa-filesystem",
     "podman",
     "docker-ce",
@@ -214,9 +212,7 @@ def get_package_groups(target: str, prev: dict[str, Any], manifests: dict[str, A
             if img not in pkg:
                 continue
 
-            if t == "hwe" and "hwe" not in image_flavor:
-                continue
-            if t == "nvidia" and "nvidia" not in image_flavor:
+            if t == "nvidia-open" and "nvidia-open" not in image_flavor:
                 continue
             if t == "gnome" and de != "gnome":
                 continue
@@ -244,7 +240,9 @@ def get_versions(manifests: dict[str, Any]):
     pkgs = get_packages(manifests)
     for img_pkgs in pkgs.values():
         for pkg, v in img_pkgs.items():
-            versions[pkg] = re.sub(FEDORA_PATTERN, "", v)
+            v = re.sub(FEDORA_PATTERN, "", v)
+            v = re.sub(r"\.switcheroo", "", v)
+            versions[pkg] = v
     return versions
 
 
@@ -299,7 +297,7 @@ def get_commits(prev_manifests, manifests, workdir: str):
                 "-C",
                 workdir,
                 "log",
-                "--pretty=format:%H %h %s",
+                "--pretty=format:%H|%h|%an|%s",
                 f"{start}..{finish}",
             ],
             check=True,
@@ -310,7 +308,10 @@ def get_commits(prev_manifests, manifests, workdir: str):
         for commit in commits.split("\n"):
             if not commit:
                 continue
-            githash, short, subject = commit.split(" ", 2)
+            parts = commit.split("|", 3)
+            if len(parts) < 4:
+                continue
+            githash, short, author, subject = parts
 
             if subject.lower().startswith("merge"):
                 continue
@@ -321,6 +322,7 @@ def get_commits(prev_manifests, manifests, workdir: str):
                 COMMIT_FORMAT.replace("{short}", short)
                 .replace("{subject}", subject)
                 .replace("{githash}", githash)
+                .replace("{author}", author)
             )
 
         if out:
@@ -381,11 +383,6 @@ def generate_changelog(
     title = CHANGELOG_TITLE.format_map(defaultdict(str, tag=curr, pretty=pretty))
 
     changelog = CHANGELOG_FORMAT
-
-    if target == "gts":
-        changelog = changelog.splitlines()
-        del changelog[9]
-        changelog = '\n'.join(changelog)
 
     changelog = (
         changelog.replace("{handwritten}", handwritten if handwritten else HANDWRITTEN_PLACEHOLDER)

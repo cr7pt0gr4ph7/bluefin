@@ -7,23 +7,22 @@ on:
       - testing
     paths-ignore:
       - "**.md"
-      - 'system_files/kinoite/**'
+      - ".github/workflows/*iso*.yml"
+      - ".github/workflows/*validate*.yml"
       - "iso_files/**"
-      - "bluefin_flatpaks/**"
-      - "dx_flatpaks/**"
-      - ".github/workflows/*iso*"
+      - "system_files/shared/etc/bazaar/**"
   push:
     branches:
       - main
+      - testing
     paths-ignore:
-      - '**.md'
-      - 'system_files/kinoite/**'
+      - "**.md"
+      - ".github/workflows/*iso*.yml"
+      - ".github/workflows/*validate*.yml"
       - "iso_files/**"
-      - "bluefin_flatpaks/**"
-      - "dx_flatpaks/**"
-      - ".github/workflows/*iso*"
+      - "system_files/shared/etc/bazaar/**"
   schedule:
-    - cron: "50 5 * * 0" # 5:50 UTC sunday
+    - cron: "0 1 * * TUE" # Every Tuesday at 1:00 AM UTC (same as bluefin-lts)
   workflow_call:
   workflow_dispatch:
 
@@ -37,7 +36,7 @@ jobs:
       matrix:
         brand_name: ["bluefin"]
     with:
-      #     kernel_pin: 6.13.8-200.fc41.x86_64 ## This is where kernels get pinned.
+      # kernel_pin: 6.14.11-300.fc42.x86_64 ## This is where kernels get pinned.
       brand_name: ${{ matrix.brand_name }}
       stream_name: stable
 

@@ -11,13 +11,26 @@ sbkey='https://github.com/ublue-os/akmods/raw/main/certs/public_key.der'
 # Configure Live Environment
 
 # Remove packages from liveCD to save space
-dnf remove -y google-noto-fonts-all ublue-brew ublue-motd yaru-theme || true
+dnf remove -y ublue-brew ublue-motd || true
 
 # Setup dock
 tee /usr/share/glib-2.0/schemas/zz2-org.gnome.shell.gschema.override <<EOF
 [org.gnome.shell]
 welcome-dialog-last-shown-version='4294967295'
 favorite-apps = ['anaconda.desktop', 'documentation.desktop', 'discourse.desktop', 'org.mozilla.firefox.desktop', 'org.gnome.Nautilus.desktop']
+EOF
+
+# Disable suspend/sleep during live environment and initial setup
+# This prevents the system from suspending during installation or first-boot user creation
+tee /usr/share/glib-2.0/schemas/zz3-bluefin-installer-power.gschema.override <<EOF
+[org.gnome.settings-daemon.plugins.power]
+sleep-inactive-ac-type='nothing'
+sleep-inactive-battery-type='nothing'
+sleep-inactive-ac-timeout=0
+sleep-inactive-battery-timeout=0
+
+[org.gnome.desktop.session]
+idle-delay=uint32 0
 EOF
 
 # don't autostart gnome-software session service
@@ -41,6 +54,7 @@ systemctl disable uupd.timer
 systemctl disable ublue-system-setup.service
 systemctl disable ublue-guest-user.service
 systemctl disable check-sb-key.service
+systemctl disable flatpak-preinstall.service
 systemctl --global disable ublue-flatpak-manager.service
 systemctl --global disable podman-auto-update.timer
 systemctl --global disable ublue-user-setup.service
@@ -53,9 +67,13 @@ SPECS=(
     "libblockdev-lvm"
     "libblockdev-dm"
     "anaconda-live"
+    "firefox"
 )
 if [[ "$IMAGE_TAG" =~ lts ]]; then
-    dnf config-manager --set-enabled centos-hyperscale
+    dnf config-manager --set-enabled centos-release-kmods-kernel
+    dnf copr enable -y jreilly/anaconda-webui
+
+    SPECS+=("anaconda-webui")
 elif [[ "$(rpm -E %fedora)" -ge 42 ]]; then
     SPECS+=("anaconda-webui")
 fi
@@ -112,7 +130,7 @@ fi
 
 # Configure
 . /etc/os-release
-if [[ "$IMAGE_TAG" =~ gts|lts ]]; then
+if [[ "$IMAGE_TAG" =~ gts ]]; then
     echo "Bluefin ${IMAGE_TAG^^} release $VERSION_ID (${VERSION_CODENAME:=Big Bird})" >/etc/system-release
 else
     echo "Bluefin release $VERSION_ID ($VERSION_CODENAME)" >/etc/system-release
